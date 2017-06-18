@@ -229,7 +229,6 @@
     <ClInclude Include="depends\lua-5.3.4\lundump.h" />
     <ClInclude Include="depends\lua-5.3.4\lvm.h" />
     <ClInclude Include="depends\lua-5.3.4\lzio.h" />
-    <ClInclude Include="GenericPatches.h" />
     <ClInclude Include="include\Ehnd\Ehnd.h" />
     <ClInclude Include="include\Ehnd\J2K_Functions.h" />
     <ClInclude Include="include\Ehnd\Scripts.h" />
@@ -238,7 +237,6 @@
     <ClInclude Include="include\Ehnd\Utils.h" />
     <ClInclude Include="include\J2KEngine\J2K_Functions.hpp" />
     <ClInclude Include="include\Library\reverse_iterate.hpp" />
-    <ClInclude Include="J2KPatches_StackCrashFix.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

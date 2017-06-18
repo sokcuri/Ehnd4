@@ -28,9 +28,6 @@
     <Filter Include="Include Files\Library">
       <UniqueIdentifier>{19b83967-cde2-40e8-911d-12aaec6e82b1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include Files\J2KEngine\Patches">
-      <UniqueIdentifier>{d69ddedd-3d3b-4c3b-a8a1-acedfb33996f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Dependency Files\lua-5.3.4">
       <UniqueIdentifier>{9786d4ca-7b93-4c1f-a96d-3ef4faf6c5bb}</UniqueIdentifier>
     </Filter>
@@ -193,12 +190,6 @@
     </ClInclude>
     <ClInclude Include="include\Ehnd\Utils.h">
       <Filter>Include Files\Ehnd</Filter>
-    </ClInclude>
-    <ClInclude Include="J2KPatches_StackCrashFix.hpp">
-      <Filter>Include Files\J2KEngine\Patches</Filter>
-    </ClInclude>
-    <ClInclude Include="GenericPatches.h">
-      <Filter>Include Files\J2KEngine\Patches</Filter>
     </ClInclude>
     <ClInclude Include="include\Ehnd\Scripts.h">
       <Filter>Include Files\Ehnd</Filter>
