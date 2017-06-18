@@ -1,0 +1,291 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Include Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Include Files\Ehnd">
+      <UniqueIdentifier>{89e76c46-239c-44e8-8b6f-57d30be216a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\J2KEngine">
+      <UniqueIdentifier>{82cc89c5-60fb-495e-8b42-6c2c5b639325}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependency Files">
+      <UniqueIdentifier>{dfa9baa6-03f0-4006-ab88-9de3c43da3b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependency Files\fmt">
+      <UniqueIdentifier>{f8c27948-5031-4148-aa61-914a9acd1f92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Library">
+      <UniqueIdentifier>{19b83967-cde2-40e8-911d-12aaec6e82b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\J2KEngine\Patches">
+      <UniqueIdentifier>{d69ddedd-3d3b-4c3b-a8a1-acedfb33996f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependency Files\lua-5.3.4">
+      <UniqueIdentifier>{9786d4ca-7b93-4c1f-a96d-3ef4faf6c5bb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Ehnd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\fmt\format.cc">
+      <Filter>Dependency Files\fmt</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\fmt\ostream.cc">
+      <Filter>Dependency Files\fmt</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\fmt\posix.cc">
+      <Filter>Dependency Files\fmt</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Scripts.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\loadlib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lobject.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lopcodes.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\loslib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lparser.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lstate.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lstring.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lstrlib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\ltable.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\ltablib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\ltm.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lua.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lundump.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lutf8lib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lvm.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lzio.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lapi.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lauxlib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lbaselib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lbitlib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lcode.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lcorolib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lctype.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\ldblib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\ldebug.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\ldo.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\ldump.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lfunc.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lgc.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\linit.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\liolib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\llex.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lmathlib.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+    <ClCompile Include="depends\lua-5.3.4\lmem.c">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Ehnd\Ehnd.h">
+      <Filter>Include Files\Ehnd</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ehnd\stdafx.h">
+      <Filter>Include Files\Ehnd</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ehnd\targetver.h">
+      <Filter>Include Files\Ehnd</Filter>
+    </ClInclude>
+    <ClInclude Include="include\J2KEngine\J2K_Functions.hpp">
+      <Filter>Include Files\J2KEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\fmt\posix.h">
+      <Filter>Dependency Files\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\fmt\time.h">
+      <Filter>Dependency Files\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\fmt\format.h">
+      <Filter>Dependency Files\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\fmt\ostream.h">
+      <Filter>Dependency Files\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Library\reverse_iterate.hpp">
+      <Filter>Include Files\Library</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ehnd\Utils.h">
+      <Filter>Include Files\Ehnd</Filter>
+    </ClInclude>
+    <ClInclude Include="J2KPatches_StackCrashFix.hpp">
+      <Filter>Include Files\J2KEngine\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="GenericPatches.h">
+      <Filter>Include Files\J2KEngine\Patches</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ehnd\Scripts.h">
+      <Filter>Include Files\Ehnd</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ehnd\J2K_Functions.h">
+      <Filter>Include Files\J2KEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lmem.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lobject.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lopcodes.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lparser.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lprefix.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lstate.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lstring.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\ltable.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\ltm.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lua.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lua.hpp">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\luaconf.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lualib.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lundump.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lvm.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lzio.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lapi.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lauxlib.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lcode.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lctype.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\ldebug.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\ldo.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lfunc.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\lgc.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\llex.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="depends\lua-5.3.4\llimits.h">
+      <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

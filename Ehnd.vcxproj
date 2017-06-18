@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{BC22DDF9-844D-44FA-B02C-0D63492903CC}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Ehnd</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)include\Ehnd;$(SolutionDir)include\J2KEngine;$(SolutionDir)include\Library;$(SolutionDir)depends\fmt;$(SolutionDir)depends\lua-5.3.4</IncludePath>
+    <SourcePath>$(VC_SourcePath);$(SolutionDir)src;$(SolutionDir)depends\fmt</SourcePath>
+    <ReferencePath>$(VC_ReferencesPath_x86)</ReferencePath>
+    <OutDir>$(SolutionDir)dist\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)out\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)include\Ehnd;$(SolutionDir)include\J2KEngine;$(SolutionDir)include\Library;$(SolutionDir)depends\fmt;$(SolutionDir)depends\lua-5.3.4</IncludePath>
+    <SourcePath>$(VC_SourcePath);$(SolutionDir)src;$(SolutionDir)depends\fmt</SourcePath>
+    <ReferencePath>$(VC_ReferencesPath_x86)</ReferencePath>
+    <OutDir>$(SolutionDir)dist\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)out\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;EHND_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>SyncCThrow</ExceptionHandling>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <ModuleDefinitionFile>$(SolutionDir)build\export.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;EHND_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;EHND_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
+      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <ExceptionHandling>SyncCThrow</ExceptionHandling>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <ModuleDefinitionFile>$(SolutionDir)build\export.def</ModuleDefinitionFile>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;EHND_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="depends\fmt\format.cc" />
+    <ClCompile Include="depends\fmt\ostream.cc" />
+    <ClCompile Include="depends\fmt\posix.cc" />
+    <ClCompile Include="depends\lua-5.3.4\lapi.c" />
+    <ClCompile Include="depends\lua-5.3.4\lauxlib.c" />
+    <ClCompile Include="depends\lua-5.3.4\lbaselib.c" />
+    <ClCompile Include="depends\lua-5.3.4\lbitlib.c" />
+    <ClCompile Include="depends\lua-5.3.4\lcode.c" />
+    <ClCompile Include="depends\lua-5.3.4\lcorolib.c" />
+    <ClCompile Include="depends\lua-5.3.4\lctype.c" />
+    <ClCompile Include="depends\lua-5.3.4\ldblib.c" />
+    <ClCompile Include="depends\lua-5.3.4\ldebug.c" />
+    <ClCompile Include="depends\lua-5.3.4\ldo.c" />
+    <ClCompile Include="depends\lua-5.3.4\ldump.c" />
+    <ClCompile Include="depends\lua-5.3.4\lfunc.c" />
+    <ClCompile Include="depends\lua-5.3.4\lgc.c" />
+    <ClCompile Include="depends\lua-5.3.4\linit.c" />
+    <ClCompile Include="depends\lua-5.3.4\liolib.c" />
+    <ClCompile Include="depends\lua-5.3.4\llex.c" />
+    <ClCompile Include="depends\lua-5.3.4\lmathlib.c" />
+    <ClCompile Include="depends\lua-5.3.4\lmem.c" />
+    <ClCompile Include="depends\lua-5.3.4\loadlib.c" />
+    <ClCompile Include="depends\lua-5.3.4\lobject.c" />
+    <ClCompile Include="depends\lua-5.3.4\lopcodes.c" />
+    <ClCompile Include="depends\lua-5.3.4\loslib.c" />
+    <ClCompile Include="depends\lua-5.3.4\lparser.c" />
+    <ClCompile Include="depends\lua-5.3.4\lstate.c" />
+    <ClCompile Include="depends\lua-5.3.4\lstring.c" />
+    <ClCompile Include="depends\lua-5.3.4\lstrlib.c" />
+    <ClCompile Include="depends\lua-5.3.4\ltable.c" />
+    <ClCompile Include="depends\lua-5.3.4\ltablib.c" />
+    <ClCompile Include="depends\lua-5.3.4\ltm.c" />
+    <ClCompile Include="depends\lua-5.3.4\lua.c" />
+    <ClCompile Include="depends\lua-5.3.4\lundump.c" />
+    <ClCompile Include="depends\lua-5.3.4\lutf8lib.c" />
+    <ClCompile Include="depends\lua-5.3.4\lvm.c" />
+    <ClCompile Include="depends\lua-5.3.4\lzio.c" />
+    <ClCompile Include="src\dllmain.cpp" />
+    <ClCompile Include="src\Ehnd.cpp" />
+    <ClCompile Include="src\Scripts.cpp" />
+    <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\Utils.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="depends\fmt\format.h" />
+    <ClInclude Include="depends\fmt\ostream.h" />
+    <ClInclude Include="depends\fmt\posix.h" />
+    <ClInclude Include="depends\fmt\time.h" />
+    <ClInclude Include="depends\lua-5.3.4\lapi.h" />
+    <ClInclude Include="depends\lua-5.3.4\lauxlib.h" />
+    <ClInclude Include="depends\lua-5.3.4\lcode.h" />
+    <ClInclude Include="depends\lua-5.3.4\lctype.h" />
+    <ClInclude Include="depends\lua-5.3.4\ldebug.h" />
+    <ClInclude Include="depends\lua-5.3.4\ldo.h" />
+    <ClInclude Include="depends\lua-5.3.4\lfunc.h" />
+    <ClInclude Include="depends\lua-5.3.4\lgc.h" />
+    <ClInclude Include="depends\lua-5.3.4\llex.h" />
+    <ClInclude Include="depends\lua-5.3.4\llimits.h" />
+    <ClInclude Include="depends\lua-5.3.4\lmem.h" />
+    <ClInclude Include="depends\lua-5.3.4\lobject.h" />
+    <ClInclude Include="depends\lua-5.3.4\lopcodes.h" />
+    <ClInclude Include="depends\lua-5.3.4\lparser.h" />
+    <ClInclude Include="depends\lua-5.3.4\lprefix.h" />
+    <ClInclude Include="depends\lua-5.3.4\lstate.h" />
+    <ClInclude Include="depends\lua-5.3.4\lstring.h" />
+    <ClInclude Include="depends\lua-5.3.4\ltable.h" />
+    <ClInclude Include="depends\lua-5.3.4\ltm.h" />
+    <ClInclude Include="depends\lua-5.3.4\lua.h" />
+    <ClInclude Include="depends\lua-5.3.4\lua.hpp" />
+    <ClInclude Include="depends\lua-5.3.4\luaconf.h" />
+    <ClInclude Include="depends\lua-5.3.4\lualib.h" />
+    <ClInclude Include="depends\lua-5.3.4\lundump.h" />
+    <ClInclude Include="depends\lua-5.3.4\lvm.h" />
+    <ClInclude Include="depends\lua-5.3.4\lzio.h" />
+    <ClInclude Include="GenericPatches.h" />
+    <ClInclude Include="include\Ehnd\Ehnd.h" />
+    <ClInclude Include="include\Ehnd\J2K_Functions.h" />
+    <ClInclude Include="include\Ehnd\Scripts.h" />
+    <ClInclude Include="include\Ehnd\stdafx.h" />
+    <ClInclude Include="include\Ehnd\targetver.h" />
+    <ClInclude Include="include\Ehnd\Utils.h" />
+    <ClInclude Include="include\J2KEngine\J2K_Functions.hpp" />
+    <ClInclude Include="include\Library\reverse_iterate.hpp" />
+    <ClInclude Include="J2KPatches_StackCrashFix.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\minhook.1.3.3\build\native\minhook.targets" Condition="Exists('packages\minhook.1.3.3\build\native\minhook.targets')" />
+  </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>이 프로젝트는 이 컴퓨터에 없는 NuGet 패키지를 참조합니다. 해당 패키지를 다운로드하려면 NuGet 패키지 복원을 사용하십시오. 자세한 내용은 http://go.microsoft.com/fwlink/?LinkID=322105를 참조하십시오. 누락된 파일은 {0}입니다.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\minhook.1.3.3\build\native\minhook.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\minhook.1.3.3\build\native\minhook.targets'))" />
+  </Target>
+</Project>
