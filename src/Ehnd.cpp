@@ -43,6 +43,7 @@ LPBYTE lpfnRetn_C_Begin;
 
 LPVOID fpPatch_Org_B1;
 
+LPVOID fpPatch_Org_C1A_1;
 LPVOID fpPatch_Org_C1A_2;
 LPVOID fpPatch_Org_C1B_1;
 LPVOID fpPatch_Org_C1C_1;
@@ -56,6 +57,7 @@ LPVOID fpPatch_Org_C1E_5;
 LPVOID fpPatch_Org_C1E_6;
 LPVOID fpPatch_Org_C1E_7;
 LPVOID fpPatch_Org_C1E_8;
+LPVOID fpPatch_Org_C1E_9;
 LPVOID fpPatch_Org_C1F_1;
 LPVOID fpPatch_Org_C1F_2;
 LPVOID fpPatch_Org_C1F_3;
@@ -76,7 +78,6 @@ LPVOID fpPatch_Org_C2_6;
 LPVOID fpPatch_Org_C3A_1;
 LPVOID fpPatch_Org_C3A_2;
 LPVOID fpPatch_Org_C3B_1;
-LPVOID fpPatch_Org_C3C_1;
 LPVOID fpPatch_Org_C3C_2;
 LPVOID fpPatch_Org_C3D_1;
 LPVOID fpPatch_Org_C3D_2;
@@ -94,6 +95,7 @@ LPVOID fpPatch_Org_C8_3;
 LPVOID fpPatch_Org_C8_4;
 LPVOID fpPatch_Org_C9;
 LPVOID fpPatch_Org_C10;
+LPVOID fpPatch_Org_C11;
 void DetourInitializeEx(char *a, char *b)
 {
 
@@ -161,14 +163,14 @@ char *Patch_B1a(char *p1, char *p2, int n)
 	static int _size = 0;
 	static char *_mem = NULL;
 
-	int len = strlen(p1 + 0x98); // existing stored string
+	//int len = strlen(p1 + 0x98); // existing stored string
 	int len2 = strlen(*(char **)(p1 + 0x20)); // store string
-	int total_size = 0xA0 + len + len2;
+	int total_size = 0x120 + (len2) * 2;
 
 	delete[] _mem;
 	_size = total_size;
 	_mem = new char[total_size];
-	memcpy(_mem, p1, 0xA0);
+	memcpy(_mem, p1, 0x120);
 
 	return _mem;
 }
@@ -231,6 +233,18 @@ __declspec(naked) void Patch_C1(char chr)
 }
 
 // MOV BYTE PTR SS:[ESP+ESI+0x38], 0x00
+__declspec(naked) void Patch_C1A_1()
+{
+	__asm
+	{
+		PUSH 0x00
+		CALL Patch_C1
+		ADD ESP, 0x04
+		PUSH fpPatch_Org_C1A_1
+		ADD DWORD PTR SS:[ESP], 0x05
+		RETN
+	}
+}
 __declspec(naked) void Patch_C1A_2()
 {
 	__asm
@@ -392,6 +406,18 @@ __declspec(naked) void Patch_C1E_8()
 		CALL Patch_C1
 		ADD ESP, 0x04
 		PUSH fpPatch_Org_C1E_8
+		ADD DWORD PTR SS : [ESP], 0x04
+		RETN
+	}
+}
+__declspec(naked) void Patch_C1E_9()
+{
+	__asm
+	{
+		PUSH EAX
+		CALL Patch_C1
+		ADD ESP, 0x04
+		PUSH fpPatch_Org_C1E_9
 		ADD DWORD PTR SS : [ESP], 0x04
 		RETN
 	}
@@ -674,18 +700,6 @@ __declspec(naked) void Patch_C3B_1()
 	}
 }
 // MOV BYTE PTR SS:[ESP+0x38], CL
-__declspec(naked) void Patch_C3C_1()
-{
-	__asm
-	{
-		PUSH ECX
-		CALL Patch_C3
-		ADD ESP, 0x04
-		PUSH fpPatch_Org_C3C_1
-		ADD DWORD PTR SS : [ESP], 0x04
-		RETN
-	}
-}
 __declspec(naked) void Patch_C3C_2()
 {
 	__asm
@@ -938,6 +952,26 @@ __declspec(naked) void Patch_C10()
 		RETN
 	}
 }
+// MOV BYTE PTR SS:[ESP+38],CL
+// MOV BYTE PTR SS:[ESP+39],AL
+__declspec(naked) void Patch_C11()
+{
+	__asm
+	{
+		PUSH EDX
+		MOV EDX, DWORD PTR SS : [ESP + 0x1040]
+		MOV BYTE PTR DS:[EDX], CL
+		MOV BYTE PTR DS:[EDX+1], AL
+		POP EDX
+
+		PUSH fpPatch_Org_C11
+		ADD DWORD PTR SS : [ESP], 0x04
+		RETN
+	}
+}
+
+
+
 __declspec(naked) void Patch_C_End()
 {
 	__asm
@@ -1127,9 +1161,10 @@ bool EH_InstallHook(char *libPath)
 			{
 				MessageBox(0, L"Patch Failed", 0, 0);
 			}
-			MH_EnableHook(addr);
+			//MH_EnableHook(addr);
 		}
 	}());
+
 
 	// crash fix #3 (tokenize)
 	([] {
@@ -1246,7 +1281,6 @@ bool EH_InstallHook(char *libPath)
 		// +0x632
 
 		// #3C -- MOV BYTE PTR SS:[ESP+38],CL
-		// +0x5F6
 		// +0x921
 
 		// #3D -- MOV BYTE PTR SS:[ESP+38],DL
@@ -1287,6 +1321,10 @@ bool EH_InstallHook(char *libPath)
 		//     -- MOV BYTE PTR SS:[ESP+ESI+38],0
 		// +0x51F
 
+		// #11 -- MOV BYTE PTR SS:[ESP+38],CL
+		//     -- MOV BYTE PTR SS:[ESP+39],AL
+		// +0x5FA
+
 
 		WORD ptn[] = { 0x6A, 0xFF, 0x64, 0xA1, 0x00, 0x00, 0x00, 0x00, 0x68, -1, -1, -1, -1, 0x50, 0xB8, 0x28, 0x10, 0x00, 0x00 };
 		LPBYTE addr = NULL;
@@ -1303,6 +1341,10 @@ bool EH_InstallHook(char *libPath)
 			}
 
 			// #1A -- MOV BYTE PTR SS:[ESP+ESI+38],0
+			/*if (MH_CreateHook(addr + 0x51F, Patch_C1A_1, &fpPatch_Org_C1A_1) != MH_OK)
+			{
+				MessageBox(0, L"Patch Failed", 0, 0);
+			}*/
 			if (MH_CreateHook(addr + 0xC3E, Patch_C1A_2, &fpPatch_Org_C1A_2) != MH_OK)
 			{
 				MessageBox(0, L"Patch Failed", 0, 0);
@@ -1363,6 +1405,10 @@ bool EH_InstallHook(char *libPath)
 			{
 				MessageBox(0, L"Patch Failed", 0, 0);
 			}
+			/*if (MH_CreateHook(addr + 0x970, Patch_C1E_9, &fpPatch_Org_C1E_9) != MH_OK)
+			{
+				MessageBox(0, L"Patch Failed", 0, 0);
+			}*/
 
 			// #1F -- MOV BYTE PTR SS:[ESP+ESI+38],CL
 			if (MH_CreateHook(addr + 0x390, Patch_C1F_1, &fpPatch_Org_C1F_1) != MH_OK)
@@ -1455,10 +1501,6 @@ bool EH_InstallHook(char *libPath)
 			}
 
 			// #3C -- MOV BYTE PTR SS:[ESP+38],CL
-			if (MH_CreateHook(addr + 0x5F6, Patch_C3C_1, &fpPatch_Org_C3C_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
 			if (MH_CreateHook(addr + 0x921, Patch_C3C_2, &fpPatch_Org_C3C_2) != MH_OK)
 			{
 				MessageBox(0, L"Patch Failed", 0, 0);
@@ -1487,10 +1529,6 @@ bool EH_InstallHook(char *libPath)
 			}
 
 			// #4C -- MOV BYTE PTR SS:[ESP+39],AL
-			if (MH_CreateHook(addr + 0x5FA, Patch_C4C_1, &fpPatch_Org_C4C_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
 			if (MH_CreateHook(addr + 0x613, Patch_C4C_2, &fpPatch_Org_C4C_2) != MH_OK)
 			{
 				MessageBox(0, L"Patch Failed", 0, 0);
@@ -1537,27 +1575,33 @@ bool EH_InstallHook(char *libPath)
 				MessageBox(0, L"Patch Failed", 0, 0);
 			}
 
-			// #9 -- LEA ECX,DWORD PTR SS:[ESP+38]
-			//    -- MOV BYTE PTR SS:[ESP+ESI+38],AL
+			// #9
 			if (MH_CreateHook(addr + 0x970, Patch_C9, &fpPatch_Org_C9) != MH_OK)
 			{
 				MessageBox(0, L"Patch Failed", 0, 0);
 			}
 
-			// #10 -- LEA ECX,DWORD PTR SS:[ESP+38]
-			//     -- MOV BYTE PTR SS:[ESP+ESI+38],0
+			// #10
 			if (MH_CreateHook(addr + 0x51F, Patch_C10, &fpPatch_Org_C10) != MH_OK)
 			{
 				MessageBox(0, L"Patch Failed", 0, 0);
 			}
+
+			// #11
+			if (MH_CreateHook(addr + 0x5FA, Patch_C11, &fpPatch_Org_C11) != MH_OK)
+			{
+				MessageBox(0, L"Patch Failed", 0, 0);
+			}
+
 			// Begin/End
 			lpfnRetn_C_Begin = addr + 0x0D;
 			MH_EnableHook(addr);
 			MH_EnableHook(addr + 0xD40);
 
 			// #1A -- MOV BYTE PTR SS:[ESP+ESI+38],0
+			MH_EnableHook(addr + 0x51F);
 			MH_EnableHook(addr + 0xC3E);
-			
+
 			// #1B -- MOV BYTE PTR SS:[ESP+ESI+38],41
 			MH_EnableHook(addr + 0xB20);
 
@@ -1577,7 +1621,8 @@ bool EH_InstallHook(char *libPath)
 			MH_EnableHook(addr + 0x503);
 			MH_EnableHook(addr + 0x7AE);
 			MH_EnableHook(addr + 0x897);
-			
+			MH_EnableHook(addr + 0x970);
+
 			// #1F -- MOV BYTE PTR SS:[ESP+ESI+38],CL
 			MH_EnableHook(addr + 0x390);
 			MH_EnableHook(addr + 0x415);
@@ -1586,7 +1631,7 @@ bool EH_InstallHook(char *libPath)
 			MH_EnableHook(addr + 0x7FD);
 			MH_EnableHook(addr + 0x866);
 			MH_EnableHook(addr + 0xAA2);
-			
+
 			// #1G -- MOV BYTE PTR SS:[ESP+ESI+38],DL
 			MH_EnableHook(addr + 0x41D);
 			MH_EnableHook(addr + 0x469);
@@ -1600,7 +1645,7 @@ bool EH_InstallHook(char *libPath)
 			MH_EnableHook(addr + 0xAB5);
 			MH_EnableHook(addr + 0x8B5);
 			MH_EnableHook(addr + 0x9FD);
-			
+
 			// #3A -- MOV BYTE PTR SS:[ESP+38],81
 			MH_EnableHook(addr + 0x5B0);
 			MH_EnableHook(addr + 0x5CE);
@@ -1609,7 +1654,6 @@ bool EH_InstallHook(char *libPath)
 			MH_EnableHook(addr + 0x632);
 
 			// #3C -- MOV BYTE PTR SS:[ESP+38],CL
-			MH_EnableHook(addr + 0x5F6);
 			MH_EnableHook(addr + 0x921);
 
 			// #3D -- MOV BYTE PTR SS:[ESP+38],DL
@@ -1642,15 +1686,18 @@ bool EH_InstallHook(char *libPath)
 			MH_EnableHook(addr + 0xAAC);
 			MH_EnableHook(addr + 0xBB3);
 
-			// #9 -- LEA ECX,DWORD PTR SS:[ESP+38]
-			//    -- MOV BYTE PTR SS:[ESP+ESI+38],AL
+			// #9
 			MH_EnableHook(addr + 0x970);
 
-			// #10 -- LEA ECX,DWORD PTR SS:[ESP+38]
-			//     -- MOV BYTE PTR SS:[ESP+ESI+38],0
+			// #10
 			MH_EnableHook(addr + 0x51F);
+
+			// #11
+			MH_EnableHook(addr + 0x5FA);
+
 		}
 	}());
+
 	
 	return true;
 }
