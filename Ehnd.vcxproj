@@ -192,6 +192,7 @@
     <ClCompile Include="depends\lua-5.3.4\lutf8lib.c" />
     <ClCompile Include="depends\lua-5.3.4\lvm.c" />
     <ClCompile Include="depends\lua-5.3.4\lzio.c" />
+    <ClCompile Include="src\CrashFix.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\Ehnd.cpp" />
     <ClCompile Include="src\Scripts.cpp" />
@@ -229,13 +230,14 @@
     <ClInclude Include="depends\lua-5.3.4\lundump.h" />
     <ClInclude Include="depends\lua-5.3.4\lvm.h" />
     <ClInclude Include="depends\lua-5.3.4\lzio.h" />
+    <ClInclude Include="include\Ehnd\CrashFix.h" />
     <ClInclude Include="include\Ehnd\Ehnd.h" />
     <ClInclude Include="include\Ehnd\J2K_Functions.h" />
+    <ClInclude Include="include\Ehnd\J2K_Functions.hpp" />
     <ClInclude Include="include\Ehnd\Scripts.h" />
     <ClInclude Include="include\Ehnd\stdafx.h" />
     <ClInclude Include="include\Ehnd\targetver.h" />
     <ClInclude Include="include\Ehnd\Utils.h" />
-    <ClInclude Include="include\J2KEngine\J2K_Functions.hpp" />
     <ClInclude Include="include\Library\reverse_iterate.hpp" />
   </ItemGroup>
   <ItemGroup>

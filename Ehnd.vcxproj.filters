@@ -16,9 +16,6 @@
     <Filter Include="Include Files\Ehnd">
       <UniqueIdentifier>{89e76c46-239c-44e8-8b6f-57d30be216a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include Files\J2KEngine">
-      <UniqueIdentifier>{82cc89c5-60fb-495e-8b42-6c2c5b639325}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Dependency Files">
       <UniqueIdentifier>{dfa9baa6-03f0-4006-ab88-9de3c43da3b5}</UniqueIdentifier>
     </Filter>
@@ -159,6 +156,9 @@
     <ClCompile Include="depends\lua-5.3.4\lmem.c">
       <Filter>Dependency Files\lua-5.3.4</Filter>
     </ClCompile>
+    <ClCompile Include="src\CrashFix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Ehnd\Ehnd.h">
@@ -169,9 +169,6 @@
     </ClInclude>
     <ClInclude Include="include\Ehnd\targetver.h">
       <Filter>Include Files\Ehnd</Filter>
-    </ClInclude>
-    <ClInclude Include="include\J2KEngine\J2K_Functions.hpp">
-      <Filter>Include Files\J2KEngine</Filter>
     </ClInclude>
     <ClInclude Include="depends\fmt\posix.h">
       <Filter>Dependency Files\fmt</Filter>
@@ -193,9 +190,6 @@
     </ClInclude>
     <ClInclude Include="include\Ehnd\Scripts.h">
       <Filter>Include Files\Ehnd</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Ehnd\J2K_Functions.h">
-      <Filter>Include Files\J2KEngine</Filter>
     </ClInclude>
     <ClInclude Include="depends\lua-5.3.4\lmem.h">
       <Filter>Dependency Files\lua-5.3.4</Filter>
@@ -274,6 +268,15 @@
     </ClInclude>
     <ClInclude Include="depends\lua-5.3.4\llimits.h">
       <Filter>Dependency Files\lua-5.3.4</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ehnd\J2K_Functions.hpp">
+      <Filter>Include Files\Ehnd</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ehnd\J2K_Functions.h">
+      <Filter>Include Files\Ehnd</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Ehnd\CrashFix.h">
+      <Filter>Include Files\Ehnd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

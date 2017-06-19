@@ -52,6 +52,9 @@
 
 #include "J2K_Functions.h"
 
+// define naked
+#define NAKED __declspec(naked)
+
 // extern variable
 extern HINSTANCE g_hInst;
 extern BOOL g_bInit;
