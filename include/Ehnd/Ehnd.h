@@ -18,25 +18,7 @@
 *   If not, see <http://www.gnu.org/licenses/>.
 *
 **/
-#ifdef EHND_EXPORTS
-#define EHND_API __declspec(dllexport)
-#else
-#define EHND_API __declspec(dllimport)
-#endif
-
-class EHND_API CEhnd {
-public:
-	CEhnd(void);
-};
-
-extern EHND_API int nEhnd;
 
 bool EH_UpdateCheck();
-
 bool EH_InstallHook(char *libPath);
 bool EH_UninstallHook();
-
-EHND_API int fnEhnd(void);
-
-using MESSAGEBOXW = int(*)(HWND, LPCWSTR, LPCWSTR, UINT);
-extern MESSAGEBOXW fpMessageBoxW;

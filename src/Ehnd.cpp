@@ -26,23 +26,10 @@
 
 lua_State *L = NULL;
 
-MESSAGEBOXW fpMessageBoxW = NULL;
-char *space = NULL;
-void AssignFreeSpace()
-{
-
-}
-using RETN = void(*)();
-RETN fpReturn = NULL;
-LPBYTE lpfnRetn_A1;
-LPBYTE lpfnRetn_A2;
-LPBYTE lpfnRetn_A3;
-LPBYTE lpfnRetn_B1;
-
-LPBYTE lpfnRetn_C_Begin;
-
-LPVOID fpPatch_Org_B1;
-
+LPVOID fpPatch_Org_A1;
+LPVOID fpPatch_Org_A2;
+LPVOID fpPatch_Org_A3;
+LPVOID fpPatch_Org_C_Begin;
 LPVOID fpPatch_Org_C1A_1;
 LPVOID fpPatch_Org_C1A_2;
 LPVOID fpPatch_Org_C1B_1;
@@ -96,10 +83,6 @@ LPVOID fpPatch_Org_C8_4;
 LPVOID fpPatch_Org_C9;
 LPVOID fpPatch_Org_C10;
 LPVOID fpPatch_Org_C11;
-void DetourInitializeEx(char *a, char *b)
-{
-
-}
 
 char *assign_memory(char *str)
 {
@@ -131,7 +114,20 @@ __declspec(naked) void Patch_A1()
 		CALL EDI
 
 		TEnd:
-		JMP lpfnRetn_A1
+		PUSH 0
+		PUSH EAX
+		PUSH EDX
+
+		MOV EAX, DWORD PTR DS : [fpPatch_Org_A1]
+		ADD EAX, 0x05
+		MOV EDX, DWORD PTR DS : [EAX + 1]
+		ADD EAX, EDX
+		ADD EAX, 0x08
+		MOV DWORD PTR SS:[ESP+0x08], EAX
+
+		POP EDX
+		POP EAX
+		RETN
 	}
 }
 __declspec(naked) void Patch_A2()
@@ -140,7 +136,20 @@ __declspec(naked) void Patch_A2()
 	{
 		ADD ESP, 4
 		MOV EAX, DWORD PTR SS : [ESP + 0x2C]
-		JMP lpfnRetn_A2
+		PUSH 0
+		PUSH EAX
+		PUSH EDX
+
+		MOV EAX, DWORD PTR DS : [fpPatch_Org_A2]
+		ADD EAX, 0x05
+		MOV EDX, DWORD PTR DS : [EAX + 1]
+		ADD EAX, EDX
+		ADD EAX, 0x09
+		MOV DWORD PTR SS : [ESP + 0x08], EAX
+
+		POP EDX
+		POP EAX
+		RETN
 	}
 }
 __declspec(naked) void Patch_A3()
@@ -150,42 +159,7 @@ __declspec(naked) void Patch_A3()
 		PUSH DWORD PTR SS: [ESP + 0x2C]
 		CALL destroy_memory
 		ADD ESP, 4
-
-		PUSH 0x0F
-		PUSH EBP
-		JMP lpfnRetn_A3
-	}
-}
-
-// fix buffer overflow (translate-after routine)
-char *Patch_B1a(char *p1, char *p2, int n)
-{
-	static int _size = 0;
-	static char *_mem = NULL;
-
-	//int len = strlen(p1 + 0x98); // existing stored string
-	int len2 = strlen(*(char **)(p1 + 0x20)); // store string
-	int total_size = 0x120 + (len2) * 2;
-
-	delete[] _mem;
-	_size = total_size;
-	_mem = new char[total_size];
-	memcpy(_mem, p1, 0x120);
-
-	return _mem;
-}
-__declspec(naked) void Patch_B1()
-{
-	__asm
-	{
-		PUSH DWORD PTR SS:[ESP+0x08]
-		PUSH DWORD PTR SS:[ESP+0x08]
-		PUSH ECX
-		CALL Patch_B1a // temporary memory allocate
-		ADD ESP, 0x0C
-		MOV ECX, EAX
-		
-		JMP fpPatch_Org_B1
+		JMP fpPatch_Org_A3
 	}
 }
 
@@ -199,7 +173,6 @@ __declspec(naked) void Patch_C_Begin()
 
 	__asm
 	{
-		PUSH -1
 		MOV EAX, DWORD PTR DS:[ECX+0xC4]
 		
 		// shield
@@ -214,7 +187,9 @@ __declspec(naked) void Patch_C_Begin()
 
 		PUSH EAX
 		MOV EAX, DWORD PTR FS:[0]
-		JMP lpfnRetn_C_Begin;
+		PUSH fpPatch_Org_C_Begin
+		ADD DWORD PTR SS : [ESP], 0x05
+		RETN
 	}
 }
 __declspec(naked) void Patch_C1(char chr)
@@ -1012,6 +987,8 @@ bool EH_UninitLua()
 
 bool EH_InstallHook(char *libPath)
 {
+	HINSTANCE hDLL;
+
 	// Initialize Lua
 	EH_InitLua();
 
@@ -1021,8 +998,6 @@ bool EH_InstallHook(char *libPath)
 	// Initialize minhook
 	MH_Initialize();
 
-	HINSTANCE hDLL;
-	
 	// Load J2KEngine.dlx
 	if ((hDLL = LoadLibraryA(libPath)) == NULL)
 	{
@@ -1031,7 +1006,7 @@ bool EH_InstallHook(char *libPath)
 	}
 
 	// Declare eztrans function tables
-	std::list<std::pair<char *, LPVOID>> fpTable =
+	std::list<std::pair<char *, LPVOID>> fpEztTable =
 	{
 		{ "J2K_Initialize", &fpJ2KInitialize },
 		{ "J2K_InitializeEx", &fpJ2KInitializeEx },
@@ -1054,7 +1029,7 @@ bool EH_InstallHook(char *libPath)
 		{ "J2K_TranslateMMNT", &fpJ2KTranslateMMNT },
 		{ "?GetJ2KMainDir@@YA?AVCString@@XZ", &fpJ2KGetJ2KMainDir },
 	};
-	for (auto &p : fpTable)
+	for (auto &p : fpEztTable)
 	{
 		if ((*reinterpret_cast<LPVOID *>(p.second) =
 			reinterpret_cast<LPVOID>(
@@ -1065,640 +1040,177 @@ bool EH_InstallHook(char *libPath)
 			return false;
 		}
 	}
-	
-	g_bInit = true;
 
-	// fix to function (hook)
-	([] {
-		// 101D66B0   > \6A FF               PUSH -1
-		// 101D66B2   .  68 6A5B1F10         PUSH J2KEngin.101F5B6A                   ;  SE handler installation
-		// 101D66B7   .  64:A1 00000000      MOV EAX,DWORD PTR FS:[0]
-		// 101D66BD   .  50                  PUSH EAX
-		// 101D66BE   .  64:8925 00000000    MOV DWORD PTR FS:[0],ESP
-		// 101D66C5      81EC 1C010000       SUB ESP,11C
-		// 101D66CB   .  53                  PUSH EBX
-		// 101D66CC   .  55                  PUSH EBP
-		// 101D66CD   .  56                  PUSH ESI
-		// 101D66CE   .  57                  PUSH EDI
-		// 101D66CF   .  8BD9                MOV EBX,ECX
-		// 101D66D1   .  6A 30               PUSH 30
+	// CrashFix -- Prevent to crash ezTransXP
+	LPBYTE addr1, addr2;
 
-		// 6A FF 68 ?? ?? ?? ?? 64 A1 00 00 00 00 50 64 89 25 00 00 00 00 81 EC 1C 01 00 00
+	WORD ptn1[] = {										// 6A FF 68 ?? ?? ?? ?? 64 A1 00 00 00 00 50 64 89 25 00 00 00 00 81 EC 1C 01 00 00
+		0x6A, 0xFF,										// 101D66B0 | 6A FF               PUSH -1
+		0x68, -1, -1, -1, -1,							// 101D66B2 | 68 6A5B1F10         PUSH J2KEngin.101F5B6A
+		0x64, 0xA1, 0x00, 0x00, 0x00, 0x00,				// 101D66B7 | 64:A1 00000000      MOV EAX,DWORD PTR FS:[0]
+		0x50,											// 101D66BD | 50                  PUSH EAX
+		0x64, 0x89, 0x25, 0x00, 0x00, 0x00, 0x00,		// 101D66BE | 64:8925 00000000    MOV DWORD PTR FS:[0],ESP
+		0x81, 0xEC, 0x1C, 0x01, 0x00, 0x00 };			// 101D66C5 | 81EC 1C010000       SUB ESP,11C
 
-		// +0x248 | LEA EDX,DWORD PTR SS:[ESP+2C] // CALL EDI (lstrcpyA)
-		// +0x263 | ADD ESP,4; MOV ESI, EBP // LEA EAX,DWORD PTR SS:[ESP+2C]
-		// +0x2A1 | PUSH 0x0F; PUSH EBP; MOV ECX, EBX
-		WORD ptn[] = { 0x6A, 0xFF, 0x68, -1, -1, -1, -1, 0x64, 0xA1, 0x00, 0x00, 0x00, 0x00, 0x50, 0x64, 0x89, 0x25, 0x00, 0x00, 0x00, 0x00, 0x81, 0xEC, 0x1C, 0x01, 0x00, 0x00 };
-		LPBYTE addr = NULL;
-		if (search_ptn(ptn, _countof(ptn), &addr, g_szDLLName) == 1)
+	WORD ptn2[] = {										// 6A FF 64 A1 00 00 00 00 68 ?? ?? ?? ?? 50 B8 28 10 00 00
+		0x6A, 0xFF,										// 101D5590 | 6A FF               PUSH -1
+		0x64, 0xA1, 0x00, 0x00, 0x00, 0x00,				// 101D5592 | 64:A1 00000000      MOV EAX, DWORD PTR FS : [0]
+		0x68, -1, -1, -1, -1,							// 101D5598 | 68 4D6D1F10         PUSH J2KEngin.101F6D4D
+		0x50,											// 101D559D | 50                  PUSH EAX
+		0xB8, 0x28, 0x10, 0x00, 0x00 };					// 101D559E | B8 28100000         MOV EAX, 1028
+
+	std::list<std::tuple<char *, WORD *, size_t, LPBYTE *>> patterns = {
+		{ "CrashFix Pattern 1", ptn1, _countof(ptn1), &addr1 },
+		{ "CrashFix Pattern 2", ptn2, _countof(ptn2), &addr2 }
+	};
+	for (const auto &p : patterns)
+	{
+		if (search_ptn(std::get<1>(p), std::get<2>(p), std::get<3>(p), g_szDLLName) != 1)
 		{
-			if (MH_CreateHook(addr + 0x248, Patch_A1, NULL) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x263, Patch_A2, NULL) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x2A1, Patch_A3, NULL) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			lpfnRetn_A1 = addr + 0x248 + 0x08;
-			lpfnRetn_A2 = addr + 0x263 + 0x09;
-			lpfnRetn_A3 = addr + 0x2A1 + 0x05;
-			MH_EnableHook(addr + 0x248);
-			MH_EnableHook(addr + 0x263);
-			MH_EnableHook(addr + 0x2A1);
-			//MH_EnableHook(addr + 0x268);
-			//MH_EnableHook(addr + 0x6E0);
+			printf("Can't Found %s\n", std::get<0>(p));
+			return false;
 		}
-	}());
+	}
 
-	// crash fix #2 (translated after)
-	([] {
-		//101C73C0    6A FF           PUSH - 1
-		//101C73C2    68 0E6C1F10     PUSH J2KEngin.101F6C0E
-		//101C73C7    64:A1 00000000  MOV EAX, DWORD PTR FS : [0]
-		//101C73CD    50              PUSH EAX
-		//101C73CE    64 : 8925 0000000>MOV DWORD PTR FS : [0], ESP
-		//101C73D5    81EC 18020000   SUB ESP, 218
-		//101C73DB    53              PUSH EBX
-		//101C73DC    55              PUSH EBP
-		//101C73DD    56              PUSH ESI
-		//101C73DE    57              PUSH EDI
-		//101C73DF    8BF1            MOV ESI, ECX
-		//101C73E1    8BBC24 38020000 MOV EDI, DWORD PTR SS : [ESP + 238]
-		//101C73E8    33ED            XOR EBP, EBP
-		//101C73EA    3BFD            CMP EDI, EBP
-		//101C73EC    89AC24 30020000 MOV DWORD PTR SS : [ESP + 230], EBP
-		//101C73F3    0F84 710D0000   JE J2KEngin.101C816A
-		//101C73F9    E8 FBACE3FF     CALL J2KEngin.100020F9
-		//101C73FE    83F8 FF         CMP EAX, -1
-		//101C7401    75 06           JNZ SHORT J2KEngin.101C7409
-		//101C7403    89AE 94000000   MOV DWORD PTR DS : [ESI + 94], EBP
-		//101C7409    83FF 0A         CMP EDI, 0A
-		//101C740C    7D 3C           JGE SHORT J2KEngin.101C744A
-		//101C740E    8BCE            MOV ECX, ESI
-		//101C7410    E8 D6ABE3FF     CALL J2KEngin.10001FEB
-		//101C7415    83F8 FF         CMP EAX, -1
-		//101C7418    75 30           JNZ SHORT J2KEngin.101C744A
-		//101C741A    81C6 98000000   ADD ESI, 98
-		//101C7420    68 2CEE2910     PUSH J2KEngin.1029EE2C; ASCII "<???:Word도치 실패>"
-		//101C7425    56              PUSH ESI
-		//101C7426    FF15 B4152A10   CALL DWORD PTR DS : [<&KERNEL32.lstrcpyA>]; KERNEL32.lstrcpyA
-		//101C742C    8D8C24 3C020000 LEA ECX, DWORD PTR SS : [ESP + 23C]
-		//101C7433    C78424 30020000>MOV DWORD PTR SS : [ESP + 230], -1
-		//101C743E    E8 0DB60200     CALL <JMP.&MFC42.#800>
+	std::list<std::tuple<char *, LPVOID, LPVOID, LPVOID *>> fpHookTable =
+	{
+		// #A
+		{ "A_1", addr1 + 0x248, Patch_A1, &fpPatch_Org_A1 },		// +0x248 | LEA EDX,DWORD PTR SS : [ESP + 2C]	|| CALL EDI (lstrcpyA)
+		{ "A_2", addr1 + 0x263, Patch_A2, &fpPatch_Org_A2 },		// +0x263 | ADD ESP,4; MOV ESI, EBP				|| LEA EAX,DWORD PTR SS:[ESP+2C]
+		{ "A_3", addr1 + 0x2A1, Patch_A3, &fpPatch_Org_A3 },		// +0x2A1 | PUSH 0x0F; PUSH EBP; MOV ECX, EBX
 
-		// 6A FF 68 ?? ?? ?? ?? 64 A1 ?? ?? ?? ?? 50 64 89 25 00 00 00 00 81 EC 18 02 00 00
+		// #C_Begin
+		{ "C_Begin", addr2 + 0x08, Patch_C_Begin, &fpPatch_Org_C_Begin },
 
-		WORD ptn[] = { 0x6A, 0xFF, 0x68, -1, -1, -1, -1, 0x64, 0xA1, -1, -1, -1, -1, 0x50, 0x64, 0x89, 0x25, 0x00, 0x00, 0x00, 0x00, 0x81, 0xEC, 0x18, 0x02, 0x00, 0x00 };
-		LPBYTE addr = NULL;
-		if (search_ptn(ptn, _countof(ptn), &addr, g_szDLLName) == 1)
-		{
-			if (MH_CreateHook(addr, Patch_B1, &fpPatch_Org_B1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			//MH_EnableHook(addr);
-		}
-	}());
+		// #C_End
+		{ "C_End", addr2 + 0xD40, Patch_C_End, NULL },
 
+		// #C1A -- MOV BYTE PTR SS:[ESP+ESI+38],0
+		{ "C1A_2", addr2 + 0xC3E, Patch_C1A_2, &fpPatch_Org_C1A_2 },
 
-	// crash fix #3 (tokenize)
-	([] {
-		//101D5590    6A FF           PUSH - 1
-		//101D5592    64:A1 00000000  MOV EAX, DWORD PTR FS : [0]
-		//101D5598    68 4D6D1F10     PUSH J2KEngin.101F6D4D
-		//101D559D    50              PUSH EAX
-		//101D559E    B8 28100000     MOV EAX, 1028
-		//101D55A3    64 : 8925 0000000>MOV DWORD PTR FS : [0], ESP
-		//101D55AA    E8 A1DA0100     CALL J2KEngin.101F3050
-		//101D55AF    53              PUSH EBX
-		//101D55B0    55              PUSH EBP
-		//101D55B1    56              PUSH ESI
-		//101D55B2    8DB1 C4000000   LEA ESI, DWORD PTR DS : [ECX + C4]
-		//101D55B8    57              PUSH EDI
-		//101D55B9    894C24 18       MOV DWORD PTR SS : [ESP + 18], ECX
-		//101D55BD    8B3E            MOV EDI, DWORD PTR DS : [ESI]
-		//101D55BF    8B47 F8         MOV EAX, DWORD PTR DS : [EDI - 8]
-		//101D55C2    85C0            TEST EAX, EAX
-		//101D55C4    0F84 EE0C0000   JE J2KEngin.101D62B8
-		//101D55CA    E8 0121E3FF     CALL J2KEngin.100076D0
-		//101D55CF    85C0            TEST EAX, EAX
-		//101D55D1    74 19           JE SHORT J2KEngin.101D55EC
-		//101D55D3    8B06            MOV EAX, DWORD PTR DS : [ESI]
-		//101D55D5    8B40 F8         MOV EAX, DWORD PTR DS : [EAX - 8]
-		//101D55D8    85C0            TEST EAX, EAX
-		//101D55DA    7E 10           JLE SHORT J2KEngin.101D55EC
-		//101D55DC    F64438 FF 80    TEST BYTE PTR DS : [EAX + EDI - 1], 80
-		//101D55E1    75 09           JNZ SHORT J2KEngin.101D55EC
-		//101D55E3    56              PUSH ESI
-		//101D55E4    E8 0A12E3FF     CALL J2KEngin.100067F3
-		//101D55E9    83C4 04         ADD ESP, 4
-		//101D55EC    8B1E            MOV EBX, DWORD PTR DS : [ESI]
-		//101D55EE    83CD FF         OR EBP, FFFFFFFF
-		//101D55F1    8D4C24 20       LEA ECX, DWORD PTR SS : [ESP + 20]
-		//101D55F5    895C24 34       MOV DWORD PTR SS : [ESP + 34], EBX
-		//101D55F9    896C24 10       MOV DWORD PTR SS : [ESP + 10], EBP
-		//101D55FD    33F6            XOR ESI, ESI
-		//101D55FF    E8 46D40100     CALL <JMP.&MFC42.#540>
-		//101D5604    8D4C24 24       LEA ECX, DWORD PTR SS : [ESP + 24]
-		//101D5608    89B424 40100000 MOV DWORD PTR SS : [ESP + 1040], ESI
-		//101D560F    E8 36D40100     CALL <JMP.&MFC42.#540>
-		//101D5614    33C0            XOR EAX, EAX
-		//101D5616    C78424 40100000>MOV DWORD PTR SS : [ESP + 1040], 1
-		//101D5621    894424 2C       MOV DWORD PTR SS : [ESP + 2C], EAX
-		//101D5625    894424 30       MOV DWORD PTR SS : [ESP + 30], EAX
-		//101D5629    894424 14       MOV DWORD PTR SS : [ESP + 14], EAX
-		//101D562D    8A03            MOV AL, BYTE PTR DS : [EBX]
-		//101D562F    84C0            TEST AL, AL
-		//101D5631    0F84 8D0B0000   JE J2KEngin.101D61C4
-		//101D5637    8A03            MOV AL, BYTE PTR DS : [EBX]
-		//101D5639    8B3D 84192A10   MOV EDI, DWORD PTR DS : [<&MSVCRT.isalpha>]; msvcrt.isalpha
-		//101D563F    3C 3C           CMP AL, 3C
-		//101D5641    75 22           JNZ SHORT J2KEngin.101D5665
+		// #C1B -- MOV BYTE PTR SS:[ESP+ESI+38],41
+		{ "C1B_1", addr2 + 0xB20, Patch_C1B_1, &fpPatch_Org_C1B_1 },
 
-		// 6A FF 64 A1 00 00 00 00 68 ?? ?? ?? ?? 50 B8 28 10 00 00
+		// #C1C -- MOV BYTE PTR SS:[ESP+ESI+38],5B
+		{ "C1C_1", addr2 + 0x9E2, Patch_C1C_1, &fpPatch_Org_C1C_1 },
 
-		// +0x00  : Function Begin
-		// +0xD40 : Function End (RETN)
+		// #C1D -- MOV BYTE PTR SS:[ESP+ESI+38],81
+		{ "C1D_1", addr2 + 0x9D8, Patch_C1D_1, &fpPatch_Org_C1D_1 },
+		{ "C1D_2", addr2 + 0xB11, Patch_C1D_2, &fpPatch_Org_C1D_2 },
 
-		// #1A -- MOV BYTE PTR SS:[ESP+ESI+38],0
-		// +0x524
-		// +0xC43
+		// #C1E -- MOV BYTE PTR SS:[ESP+ESI+38],AL
+		{ "C1E_1", addr2 + 0x395, Patch_C1E_1, &fpPatch_Org_C1E_1 },
+		{ "C1E_2", addr2 + 0x436, Patch_C1E_2, &fpPatch_Org_C1E_2 },
+		{ "C1E_3", addr2 + 0x448, Patch_C1E_3, &fpPatch_Org_C1E_3 },
+		{ "C1E_4", addr2 + 0x475, Patch_C1E_4, &fpPatch_Org_C1E_4 },
+		{ "C1E_5", addr2 + 0x4A7, Patch_C1E_5, &fpPatch_Org_C1E_5 },
+		{ "C1E_6", addr2 + 0x503, Patch_C1E_6, &fpPatch_Org_C1E_6 },
+		{ "C1E_7", addr2 + 0x7AE, Patch_C1E_7, &fpPatch_Org_C1E_7 },
+		{ "C1E_8", addr2 + 0x897, Patch_C1E_8, &fpPatch_Org_C1E_8 },
 
-		// #1B -- MOV BYTE PTR SS:[ESP+ESI+38],41
-		// +0xB20
+		// #C1F -- MOV BYTE PTR SS:[ESP+ESI+38],CL
+		{ "C1F_1", addr2 + 0x390, Patch_C1F_1, &fpPatch_Org_C1F_1 },
+		{ "C1F_2", addr2 + 0x415, Patch_C1F_2, &fpPatch_Org_C1F_2 },
+		{ "C1F_3", addr2 + 0x778, Patch_C1F_3, &fpPatch_Org_C1F_3 },
+		{ "C1F_4", addr2 + 0x7C5, Patch_C1F_4, &fpPatch_Org_C1F_4 },
+		{ "C1F_5", addr2 + 0x7FD, Patch_C1F_5, &fpPatch_Org_C1F_5 },
+		{ "C1F_6", addr2 + 0x866, Patch_C1F_6, &fpPatch_Org_C1F_6 },
+		{ "C1F_7", addr2 + 0xAA2, Patch_C1F_7, &fpPatch_Org_C1F_7 },
 
-		// #1C -- MOV BYTE PTR SS:[ESP+ESI+38],5B
-		// +0x9E2
+		// #C1G -- MOV BYTE PTR SS:[ESP+ESI+38],DL
+		{ "C1G_1", addr2 + 0x41D, Patch_C1G_1, &fpPatch_Org_C1G_1 },
+		{ "C1G_2", addr2 + 0x469, Patch_C1G_2, &fpPatch_Org_C1G_2 },
+		{ "C1G_3", addr2 + 0x78F, Patch_C1G_3, &fpPatch_Org_C1G_3 },
+		{ "C1G_4", addr2 + 0x7E3, Patch_C1G_4, &fpPatch_Org_C1G_4 },
 
-		// #1D -- MOV BYTE PTR SS:[ESP+ESI+38],81
-		// +0x9D8
-		// +0xB11
+		// #C2 -- MOV BYTE PTR SS:[ESP+ESI+3C],0
+		{ "C2_1", addr2 + 0x3B7, Patch_C2_1, &fpPatch_Org_C2_1 },
+		{ "C2_2", addr2 + 0xB44, Patch_C2_2, &fpPatch_Org_C2_2 },
+		{ "C2_3", addr2 + 0xBC4, Patch_C2_3, &fpPatch_Org_C2_3 },
+		{ "C2_4", addr2 + 0xAB5, Patch_C2_4, &fpPatch_Org_C2_4 },
+		{ "C2_5", addr2 + 0x8B5, Patch_C2_5, &fpPatch_Org_C2_5 },
+		{ "C2_6", addr2 + 0x9FD, Patch_C2_6, &fpPatch_Org_C2_6 },
 
-		// #1E -- MOV BYTE PTR SS:[ESP+ESI+38],AL
-		// +0x395
-		// +0x436
-		// +0x448
-		// +0x475
-		// +0x4A7
-		// +0x503
-		// +0x7AE
-		// +0x897
-		// +0x970
+		// #C3A -- MOV BYTE PTR SS:[ESP+38],81
+		{ "C3A_1", addr2 + 0x5B0, Patch_C3A_1, &fpPatch_Org_C3A_1 },
+		{ "C3A_2", addr2 + 0x5CE, Patch_C3A_2, &fpPatch_Org_C3A_2 },
 
-		// #1F -- MOV BYTE PTR SS:[ESP+ESI+38],CL
-		// +0x390
-		// +0x415
-		// +0x778
-		// +0x7C5
-		// +0x7FD
-		// +0x866
-		// +0xAA2
+		// #C3B -- MOV BYTE PTR SS:[ESP+38],AL
+		{ "C3B_1", addr2 + 0x632, Patch_C3B_1, &fpPatch_Org_C3B_1 },
 
-		// #1G -- MOV BYTE PTR SS:[ESP+ESI+38],DL
-		// +0x41D
-		// +0x469
-		// +0x78F
-		// +0x7E3
+		// #C3C -- MOV BYTE PTR SS:[ESP+38],CL
+		{ "C3C_2", addr2 + 0x921, Patch_C3C_2, &fpPatch_Org_C3C_2 },
 
-		// #2 -- MOV BYTE PTR SS:[ESP+ESI+3C],0
-		// +0x3B7
-		// +0xB44
-		// +0xBC4
-		// +0xAB5
-		// +0x8B5
-		// +0x9FD
+		// #C3D -- MOV BYTE PTR SS:[ESP+38],DL
+		{ "C3D_1", addr2 + 0x60C, Patch_C3D_1, &fpPatch_Org_C3D_1 },
+		{ "C3D_2", addr2 + 0xA6D, Patch_C3D_2, &fpPatch_Org_C3D_2 },
 
-		// #3A -- MOV BYTE PTR SS:[ESP+38],81
-		// +0x5B0
-		// +0x5CE
+		// #C4A -- MOV BYTE PTR SS:[ESP+39],41
+		{ "C4A_1", addr2 + 0x5D7, Patch_C4A_1, &fpPatch_Org_C4A_1 },
 
-		// #3B -- MOV BYTE PTR SS:[ESP+38],AL
-		// +0x632
+		// #C4B -- MOV BYTE PTR SS:[ESP+39],76
+		{ "C4B_1", addr2 + 0x5B9, Patch_C4B_1, &fpPatch_Org_C4B_1 },
 
-		// #3C -- MOV BYTE PTR SS:[ESP+38],CL
-		// +0x921
+		// #C4C -- MOV BYTE PTR SS:[ESP+39],AL
+		{ "C4C_2", addr2 + 0x613, Patch_C4C_2, &fpPatch_Org_C4C_2 },
 
-		// #3D -- MOV BYTE PTR SS:[ESP+38],DL
-		// +0x60C
-		// +0xA6D
+		// #C5 -- MOV AL,BYTE PTR SS:[ESP+38]
+		{ "C5_1", addr2 + 0xC34, Patch_C5_1, &fpPatch_Org_C5_1 },
 
-		// #4A -- MOV BYTE PTR SS:[ESP+39],41
-		// +0x5D7
+		// #C6 -- LEA EAX,DWORD PTR SS:[ESP+38
+		{ "C6_1", addr2 + 0x9F4, Patch_C6_1, &fpPatch_Org_C6_1 },
+		{ "C6_2", addr2 + 0xC45, Patch_C6_2, &fpPatch_Org_C6_2 },
 
-		// #4B -- MOV BYTE PTR SS:[ESP+39],76
-		// +0x5B9
+		// #C7 -- LEA ECX,DWORD PTR SS:[ESP+38]
+		{ "C7_1", addr2 + 0xB33, Patch_C7_1, &fpPatch_Org_C7_1 },
 
-		// #4C -- MOV BYTE PTR SS:[ESP+39],AL
-		// +0x5FA
-		// +0x613
+		// #C8 -- LEA EDX,DWORD PTR SS:[ESP+38]
+		{ "C8_1", addr2 + 0x3AE, Patch_C8_1, &fpPatch_Org_C8_1 },
+		{ "C8_2", addr2 + 0x8A8, Patch_C8_2, &fpPatch_Org_C8_2 },
+		{ "C8_3", addr2 + 0xAAC, Patch_C8_3, &fpPatch_Org_C8_3 },
+		{ "C8_4", addr2 + 0xBB3, Patch_C8_4, &fpPatch_Org_C8_4 },
 
-		// #5 -- MOV AL,BYTE PTR SS:[ESP+38]
-		// +0xC34
-
-		// #6 -- LEA EAX,DWORD PTR SS:[ESP+38]
-		// +0x9F4
-		// +0xC45
-
-		// #7 -- LEA ECX,DWORD PTR SS:[ESP+38]
-		// +0xB33
-
-		// #8 -- LEA EDX,DWORD PTR SS:[ESP+38]
-		// +0x3AE
-		// +0x8A8
-		// +0xAAC
-		// +0xBB3
-
-		// #9 -- LEA ECX,DWORD PTR SS:[ESP+38]
+		// #C9 -- LEA ECX,DWORD PTR SS:[ESP+38]
 		//    -- MOV BYTE PTR SS:[ESP+ESI+38],AL
-		// +0x970
+		{ "C9_1", addr2 + 0x970, Patch_C9, &fpPatch_Org_C9 },
 
-		// #10 -- LEA ECX,DWORD PTR SS:[ESP+38]
+		// #C10 -- LEA ECX,DWORD PTR SS:[ESP+38]
 		//     -- MOV BYTE PTR SS:[ESP+ESI+38],0
-		// +0x51F
+		{ "C10_1", addr2 + 0x51F, Patch_C10, &fpPatch_Org_C10 },
 
-		// #11 -- MOV BYTE PTR SS:[ESP+38],CL
+		// #C11 -- MOV BYTE PTR SS:[ESP+38],CL
 		//     -- MOV BYTE PTR SS:[ESP+39],AL
-		// +0x5FA
+		{ "C11_1", addr2 + 0x5FA, Patch_C11, &fpPatch_Org_C11 },
+	};
 
-
-		WORD ptn[] = { 0x6A, 0xFF, 0x64, 0xA1, 0x00, 0x00, 0x00, 0x00, 0x68, -1, -1, -1, -1, 0x50, 0xB8, 0x28, 0x10, 0x00, 0x00 };
-		LPBYTE addr = NULL;
-		if (search_ptn(ptn, _countof(ptn), &addr, g_szDLLName) == 1)
+	bool patch_result = [fpHookTable]
+	{
+		for (const auto &tp : fpHookTable)
 		{
-			// Begin/End
-			if (MH_CreateHook(addr, Patch_C_Begin, NULL) != MH_OK)
+			if (MH_CreateHook(std::get<1>(tp), std::get<2>(tp), std::get<3>(tp)) != MH_OK)
 			{
-				MessageBox(0, L"Patch Failed", 0, 0);
+				printf("CreateHook Failed: %s\n", std::get<0>(tp));
+				return false;
 			}
-			if (MH_CreateHook(addr + 0xD40, Patch_C_End, NULL) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #1A -- MOV BYTE PTR SS:[ESP+ESI+38],0
-			/*if (MH_CreateHook(addr + 0x51F, Patch_C1A_1, &fpPatch_Org_C1A_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}*/
-			if (MH_CreateHook(addr + 0xC3E, Patch_C1A_2, &fpPatch_Org_C1A_2) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #1B -- MOV BYTE PTR SS:[ESP+ESI+38],41
-			if (MH_CreateHook(addr + 0xB20, Patch_C1B_1, &fpPatch_Org_C1B_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #1C -- MOV BYTE PTR SS:[ESP+ESI+38],5B
-			if (MH_CreateHook(addr + 0x9E2, Patch_C1C_1, &fpPatch_Org_C1C_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #1D -- MOV BYTE PTR SS:[ESP+ESI+38],81
-			if (MH_CreateHook(addr + 0x9D8, Patch_C1D_1, &fpPatch_Org_C1D_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0xB11, Patch_C1D_2, &fpPatch_Org_C1D_2) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #1E -- MOV BYTE PTR SS:[ESP+ESI+38],AL
-			if (MH_CreateHook(addr + 0x395, Patch_C1E_1, &fpPatch_Org_C1E_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x436, Patch_C1E_2, &fpPatch_Org_C1E_2) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x448, Patch_C1E_3, &fpPatch_Org_C1E_3) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x475, Patch_C1E_4, &fpPatch_Org_C1E_4) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x4A7, Patch_C1E_5, &fpPatch_Org_C1E_5) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x503, Patch_C1E_6, &fpPatch_Org_C1E_6) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x7AE, Patch_C1E_7, &fpPatch_Org_C1E_7) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x897, Patch_C1E_8, &fpPatch_Org_C1E_8) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			/*if (MH_CreateHook(addr + 0x970, Patch_C1E_9, &fpPatch_Org_C1E_9) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}*/
-
-			// #1F -- MOV BYTE PTR SS:[ESP+ESI+38],CL
-			if (MH_CreateHook(addr + 0x390, Patch_C1F_1, &fpPatch_Org_C1F_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x415, Patch_C1F_2, &fpPatch_Org_C1F_2) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x778, Patch_C1F_3, &fpPatch_Org_C1F_3) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x7C5, Patch_C1F_4, &fpPatch_Org_C1F_4) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x7FD, Patch_C1F_5, &fpPatch_Org_C1F_5) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x866, Patch_C1F_6, &fpPatch_Org_C1F_6) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0xAA2, Patch_C1F_7, &fpPatch_Org_C1F_7) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #1G -- MOV BYTE PTR SS:[ESP+ESI+38],DL
-			if (MH_CreateHook(addr + 0x41D, Patch_C1G_1, &fpPatch_Org_C1G_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x469, Patch_C1G_2, &fpPatch_Org_C1G_2) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x78F, Patch_C1G_3, &fpPatch_Org_C1G_3) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x7E3, Patch_C1G_4, &fpPatch_Org_C1G_4) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #2 -- MOV BYTE PTR SS:[ESP+ESI+3C],0
-			if (MH_CreateHook(addr + 0x3B7, Patch_C2_1, &fpPatch_Org_C2_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0xB44, Patch_C2_2, &fpPatch_Org_C2_2) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0xBC4, Patch_C2_3, &fpPatch_Org_C2_3) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0xAB5, Patch_C2_4, &fpPatch_Org_C2_4) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x8B5, Patch_C2_5, &fpPatch_Org_C2_5) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x9FD, Patch_C2_6, &fpPatch_Org_C2_6) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #3A -- MOV BYTE PTR SS:[ESP+38],81
-			if (MH_CreateHook(addr + 0x5B0, Patch_C3A_1, &fpPatch_Org_C3A_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x5CE, Patch_C3A_1, &fpPatch_Org_C3A_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #3B -- MOV BYTE PTR SS:[ESP+38],AL
-			if (MH_CreateHook(addr + 0x632, Patch_C3B_1, &fpPatch_Org_C3B_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #3C -- MOV BYTE PTR SS:[ESP+38],CL
-			if (MH_CreateHook(addr + 0x921, Patch_C3C_2, &fpPatch_Org_C3C_2) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #3D -- MOV BYTE PTR SS:[ESP+38],DL
-			if (MH_CreateHook(addr + 0x60C, Patch_C3D_1, &fpPatch_Org_C3D_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0xA6D, Patch_C3D_2, &fpPatch_Org_C3D_2) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #4A -- MOV BYTE PTR SS:[ESP+39],41
-			if (MH_CreateHook(addr + 0x5D7, Patch_C4A_1, &fpPatch_Org_C4A_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #4B -- MOV BYTE PTR SS:[ESP+39],76
-			if (MH_CreateHook(addr + 0x5B9, Patch_C4B_1, &fpPatch_Org_C4B_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #4C -- MOV BYTE PTR SS:[ESP+39],AL
-			if (MH_CreateHook(addr + 0x613, Patch_C4C_2, &fpPatch_Org_C4C_2) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #5 -- MOV AL,BYTE PTR SS:[ESP+38]
-			if (MH_CreateHook(addr + 0xC34, Patch_C5_1, &fpPatch_Org_C5_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #6 -- LEA EAX,DWORD PTR SS:[ESP+38]
-			if (MH_CreateHook(addr + 0x9F4, Patch_C6_1, &fpPatch_Org_C6_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0xC45, Patch_C6_2, &fpPatch_Org_C6_2) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #7 -- LEA ECX,DWORD PTR SS:[ESP+38]
-			if (MH_CreateHook(addr + 0xB33, Patch_C7_1, &fpPatch_Org_C7_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #8 -- LEA EDX,DWORD PTR SS:[ESP+38]
-			if (MH_CreateHook(addr + 0x3AE, Patch_C8_1, &fpPatch_Org_C8_1) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0x8A8, Patch_C8_2, &fpPatch_Org_C8_2) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			if (MH_CreateHook(addr + 0xAAC, Patch_C8_3, &fpPatch_Org_C8_3) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-			if (MH_CreateHook(addr + 0xBB3, Patch_C8_4, &fpPatch_Org_C8_4) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #9
-			if (MH_CreateHook(addr + 0x970, Patch_C9, &fpPatch_Org_C9) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #10
-			if (MH_CreateHook(addr + 0x51F, Patch_C10, &fpPatch_Org_C10) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// #11
-			if (MH_CreateHook(addr + 0x5FA, Patch_C11, &fpPatch_Org_C11) != MH_OK)
-			{
-				MessageBox(0, L"Patch Failed", 0, 0);
-			}
-
-			// Begin/End
-			lpfnRetn_C_Begin = addr + 0x0D;
-			MH_EnableHook(addr);
-			MH_EnableHook(addr + 0xD40);
-
-			// #1A -- MOV BYTE PTR SS:[ESP+ESI+38],0
-			MH_EnableHook(addr + 0x51F);
-			MH_EnableHook(addr + 0xC3E);
-
-			// #1B -- MOV BYTE PTR SS:[ESP+ESI+38],41
-			MH_EnableHook(addr + 0xB20);
-
-			// #1C -- MOV BYTE PTR SS:[ESP+ESI+38],5B
-			MH_EnableHook(addr + 0x9E2);
-
-			// #1D -- MOV BYTE PTR SS:[ESP+ESI+38],81
-			MH_EnableHook(addr + 0x9D8);
-			MH_EnableHook(addr + 0xB11);
-
-			// #1E -- MOV BYTE PTR SS:[ESP+ESI+38],AL
-			MH_EnableHook(addr + 0x395);
-			MH_EnableHook(addr + 0x436);
-			MH_EnableHook(addr + 0x448);
-			MH_EnableHook(addr + 0x475);
-			MH_EnableHook(addr + 0x4A7);
-			MH_EnableHook(addr + 0x503);
-			MH_EnableHook(addr + 0x7AE);
-			MH_EnableHook(addr + 0x897);
-			MH_EnableHook(addr + 0x970);
-
-			// #1F -- MOV BYTE PTR SS:[ESP+ESI+38],CL
-			MH_EnableHook(addr + 0x390);
-			MH_EnableHook(addr + 0x415);
-			MH_EnableHook(addr + 0x778);
-			MH_EnableHook(addr + 0x7C5);
-			MH_EnableHook(addr + 0x7FD);
-			MH_EnableHook(addr + 0x866);
-			MH_EnableHook(addr + 0xAA2);
-
-			// #1G -- MOV BYTE PTR SS:[ESP+ESI+38],DL
-			MH_EnableHook(addr + 0x41D);
-			MH_EnableHook(addr + 0x469);
-			MH_EnableHook(addr + 0x78F);
-			MH_EnableHook(addr + 0x7E3);
-
-			// #2 -- MOV BYTE PTR SS:[ESP+ESI+3C],0
-			MH_EnableHook(addr + 0x3B7);
-			MH_EnableHook(addr + 0xB44);
-			MH_EnableHook(addr + 0xBC4);
-			MH_EnableHook(addr + 0xAB5);
-			MH_EnableHook(addr + 0x8B5);
-			MH_EnableHook(addr + 0x9FD);
-
-			// #3A -- MOV BYTE PTR SS:[ESP+38],81
-			MH_EnableHook(addr + 0x5B0);
-			MH_EnableHook(addr + 0x5CE);
-
-			// #3B -- MOV BYTE PTR SS:[ESP+38],AL
-			MH_EnableHook(addr + 0x632);
-
-			// #3C -- MOV BYTE PTR SS:[ESP+38],CL
-			MH_EnableHook(addr + 0x921);
-
-			// #3D -- MOV BYTE PTR SS:[ESP+38],DL
-			MH_EnableHook(addr + 0x60C);
-			MH_EnableHook(addr + 0xA6D);
-
-			// #4A -- MOV BYTE PTR SS:[ESP+39],41
-			MH_EnableHook(addr + 0x5D7);
-
-			// #4B -- MOV BYTE PTR SS:[ESP+39],76
-			MH_EnableHook(addr + 0x5B9);
-
-			// #4C -- MOV BYTE PTR SS:[ESP+39],AL
-			MH_EnableHook(addr + 0x5FA);
-			MH_EnableHook(addr + 0x613);
-
-			// #5 -- MOV AL,BYTE PTR SS:[ESP+38]
-			MH_EnableHook(addr + 0xC34);
-
-			// #6 -- LEA EAX,DWORD PTR SS:[ESP+38]
-			MH_EnableHook(addr + 0x9F4);
-			MH_EnableHook(addr + 0xC45);
-
-			// #7 -- LEA ECX,DWORD PTR SS:[ESP+38]
-			MH_EnableHook(addr + 0xB33);
-
-			// #8 -- LEA EDX,DWORD PTR SS:[ESP+38]
-			MH_EnableHook(addr + 0x3AE);
-			MH_EnableHook(addr + 0x8A8);
-			MH_EnableHook(addr + 0xAAC);
-			MH_EnableHook(addr + 0xBB3);
-
-			// #9
-			MH_EnableHook(addr + 0x970);
-
-			// #10
-			MH_EnableHook(addr + 0x51F);
-
-			// #11
-			MH_EnableHook(addr + 0x5FA);
-
 		}
-	}());
 
-	
+		for (const auto &tp : fpHookTable)
+		{
+			if (MH_EnableHook(std::get<1>(tp)) != MH_OK)
+			{
+				printf("EnableHook Failed: %s\n", std::get<0>(tp));
+				return false;
+			}
+		}
+		return true;
+	}();
+	if (!patch_result)
+	{
+		MessageBox(0, L"Hook Failed", L"CrashFix", MB_ICONERROR);
+		return false;
+	}
+
+	g_bInit = true;
 	return true;
 }
 
@@ -1707,20 +1219,4 @@ bool EH_UninstallHook()
 	EH_UninitLua();
 	MH_Uninitialize();
 	return true;
-}
-
-// 내보낸 변수의 예제입니다.
-EHND_API int nEhnd=0;
-
-// 내보낸 함수의 예제입니다.
-EHND_API int fnEhnd(void)
-{
-    return 42;
-}
-
-// 내보낸 클래스의 생성자입니다.
-// 클래스 정의를 보려면 Ehnd.h를 참조하십시오.
-CEhnd::CEhnd()
-{
-    return;
 }
