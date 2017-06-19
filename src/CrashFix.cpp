@@ -110,21 +110,21 @@ NAKED void Patch_A1()
 
 		CALL EDI
 
-		TEnd :
+		TEnd:
 		PUSH 0
-			PUSH EAX
-			PUSH EDX
+		PUSH EAX
+		PUSH EDX
 
-			MOV EAX, DWORD PTR DS : [fpPatch_Org_A1]
-			ADD EAX, 0x05
-			MOV EDX, DWORD PTR DS : [EAX + 1]
-			ADD EAX, EDX
-			ADD EAX, 0x08
-			MOV DWORD PTR SS : [ESP + 0x08], EAX
+		MOV EAX, DWORD PTR DS : [fpPatch_Org_A1]
+		ADD EAX, 0x05
+		MOV EDX, DWORD PTR DS : [EAX + 1]
+		ADD EAX, EDX
+		ADD EAX, 0x08
+		MOV DWORD PTR SS : [ESP + 0x08], EAX
 
-			POP EDX
-			POP EAX
-			RETN
+		POP EDX
+		POP EAX
+		RETN
 	}
 }
 NAKED void Patch_A2()
