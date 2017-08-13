@@ -82,8 +82,11 @@ int WINAPI J2K_InitializeEx(char *AppSig, char *path)
 }
 int WINAPI J2K_FreeMem(void *mem)
 {
-	delete[] mem;
-	return 0;
+	// MFC 버전이 달라 호환되지 않음
+	return fpJ2KFreeMem(mem);
+
+	//delete[] mem;
+	//return 0;
 }
 int WINAPI J2K_GetPriorDict(void)
 {

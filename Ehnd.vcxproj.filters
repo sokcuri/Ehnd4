@@ -28,6 +28,9 @@
     <Filter Include="Dependency Files\lua-5.3.4">
       <UniqueIdentifier>{9786d4ca-7b93-4c1f-a96d-3ef4faf6c5bb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Interface">
+      <UniqueIdentifier>{903ed7e3-1fd3-4775-ad07-2bdaffeb0cdd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp">
@@ -277,6 +280,9 @@
     </ClInclude>
     <ClInclude Include="include\Ehnd\CrashFix.h">
       <Filter>Include Files\Ehnd</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Interface\Ehnd.h">
+      <Filter>Include Files\Interface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

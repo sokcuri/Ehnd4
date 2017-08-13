@@ -20,3 +20,5 @@ EXPORTS
  	J2K_TranslateMMEx
  	J2K_TranslateMMNT
 	?GetJ2KMainDir@@YA?AVCString@@XZ=J2K_GetJ2KMainDir
+
+	EH_CreateInstance

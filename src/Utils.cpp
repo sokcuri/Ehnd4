@@ -45,7 +45,6 @@ std::wstring GetLoadPathW()
 	return f.substr(0, f.rfind(L'\\') + 1);
 }
 
-
 /*
 IsWritableMemory : 주어진 메모리 주소의 상태가 쓰기가능인지 체크하는 함수
 Param :

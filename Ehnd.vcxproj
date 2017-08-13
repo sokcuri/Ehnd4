@@ -23,7 +23,7 @@
     <ProjectGuid>{BC22DDF9-844D-44FA-B02C-0D63492903CC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Ehnd</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -238,6 +238,7 @@
     <ClInclude Include="include\Ehnd\stdafx.h" />
     <ClInclude Include="include\Ehnd\targetver.h" />
     <ClInclude Include="include\Ehnd\Utils.h" />
+    <ClInclude Include="include\Interface\Ehnd.h" />
     <ClInclude Include="include\Library\reverse_iterate.hpp" />
   </ItemGroup>
   <ItemGroup>

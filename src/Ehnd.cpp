@@ -122,3 +122,9 @@ bool EH_UninstallHook()
 	MH_Uninitialize();
 	return true;
 }
+
+IEhnd *EH_CreateInstance()
+{
+	auto Inst = new CEhnd();
+	return Inst;
+}
