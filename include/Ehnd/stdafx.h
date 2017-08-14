@@ -50,8 +50,6 @@
 
 #include <lua.hpp>
 
-#include "J2K_Functions.h"
-
 // define naked
 #define NAKED __declspec(naked)
 

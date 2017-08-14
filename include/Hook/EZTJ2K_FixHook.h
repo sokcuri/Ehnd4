@@ -100,4 +100,4 @@ void Patch_C10();
 void Patch_C11();
 void Patch_C_End();
 
-bool CrashFixHook();
+bool EZTJ2K_FixHook(char *module_name);

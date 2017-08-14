@@ -31,6 +31,18 @@
     <Filter Include="Include Files\Interface">
       <UniqueIdentifier>{903ed7e3-1fd3-4775-ad07-2bdaffeb0cdd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\TLEngine">
+      <UniqueIdentifier>{cef476e5-86be-41aa-9b1e-682ddd063829}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\TLEngine">
+      <UniqueIdentifier>{4f53d450-f8c9-427c-9966-f2805d435ea0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Hook">
+      <UniqueIdentifier>{bc26eb2c-5bc0-4cb5-91fb-99f56efcabf9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Hook">
+      <UniqueIdentifier>{7d0454e5-96ca-4da5-bce4-840e20a75e68}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\dllmain.cpp">
@@ -159,8 +171,11 @@
     <ClCompile Include="depends\lua-5.3.4\lmem.c">
       <Filter>Dependency Files\lua-5.3.4</Filter>
     </ClCompile>
-    <ClCompile Include="src\CrashFix.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="src\TLEngine\TLEngine_EZT_J2K.cpp">
+      <Filter>Source Files\TLEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hook\EZTJ2K_FixHook.cpp">
+      <Filter>Source Files\Hook</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -272,17 +287,17 @@
     <ClInclude Include="depends\lua-5.3.4\llimits.h">
       <Filter>Dependency Files\lua-5.3.4</Filter>
     </ClInclude>
-    <ClInclude Include="include\Ehnd\J2K_Functions.hpp">
-      <Filter>Include Files\Ehnd</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Ehnd\J2K_Functions.h">
-      <Filter>Include Files\Ehnd</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Ehnd\CrashFix.h">
-      <Filter>Include Files\Ehnd</Filter>
-    </ClInclude>
     <ClInclude Include="include\Interface\Ehnd.h">
       <Filter>Include Files\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Interface\TLEngine.h">
+      <Filter>Include Files\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TLEngine\TLEngine_EZT_J2K.h">
+      <Filter>Include Files\TLEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Hook\EZTJ2K_FixHook.h">
+      <Filter>Include Files\Hook</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

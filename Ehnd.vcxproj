@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)include\Ehnd;$(SolutionDir)include\J2KEngine;$(SolutionDir)include\Library;$(SolutionDir)depends\fmt;$(SolutionDir)depends\lua-5.3.4</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)include\Ehnd;$(SolutionDir)include\J2KEngine;$(SolutionDir)include\Library;$(SolutionDir)include\TLEngine;$(SolutionDir)include\Hook;$(SolutionDir)depends\fmt;$(SolutionDir)depends\lua-5.3.4</IncludePath>
     <SourcePath>$(VC_SourcePath);$(SolutionDir)src;$(SolutionDir)depends\fmt</SourcePath>
     <ReferencePath>$(VC_ReferencesPath_x86)</ReferencePath>
     <OutDir>$(SolutionDir)dist\$(Configuration)\</OutDir>
@@ -83,7 +83,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)include\Ehnd;$(SolutionDir)include\J2KEngine;$(SolutionDir)include\Library;$(SolutionDir)depends\fmt;$(SolutionDir)depends\lua-5.3.4</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)include\Ehnd;$(SolutionDir)include\J2KEngine;$(SolutionDir)include\Library;$(SolutionDir)include\TLEngine;$(SolutionDir)include\Hook;$(SolutionDir)depends\fmt;$(SolutionDir)depends\lua-5.3.4</IncludePath>
     <SourcePath>$(VC_SourcePath);$(SolutionDir)src;$(SolutionDir)depends\fmt</SourcePath>
     <ReferencePath>$(VC_ReferencesPath_x86)</ReferencePath>
     <OutDir>$(SolutionDir)dist\$(Configuration)\</OutDir>
@@ -192,11 +192,12 @@
     <ClCompile Include="depends\lua-5.3.4\lutf8lib.c" />
     <ClCompile Include="depends\lua-5.3.4\lvm.c" />
     <ClCompile Include="depends\lua-5.3.4\lzio.c" />
-    <ClCompile Include="src\CrashFix.cpp" />
     <ClCompile Include="src\dllmain.cpp" />
     <ClCompile Include="src\Ehnd.cpp" />
+    <ClCompile Include="src\Hook\EZTJ2K_FixHook.cpp" />
     <ClCompile Include="src\Scripts.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\TLEngine\TLEngine_EZT_J2K.cpp" />
     <ClCompile Include="src\Utils.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -230,16 +231,16 @@
     <ClInclude Include="depends\lua-5.3.4\lundump.h" />
     <ClInclude Include="depends\lua-5.3.4\lvm.h" />
     <ClInclude Include="depends\lua-5.3.4\lzio.h" />
-    <ClInclude Include="include\Ehnd\CrashFix.h" />
     <ClInclude Include="include\Ehnd\Ehnd.h" />
-    <ClInclude Include="include\Ehnd\J2K_Functions.h" />
-    <ClInclude Include="include\Ehnd\J2K_Functions.hpp" />
     <ClInclude Include="include\Ehnd\Scripts.h" />
     <ClInclude Include="include\Ehnd\stdafx.h" />
     <ClInclude Include="include\Ehnd\targetver.h" />
     <ClInclude Include="include\Ehnd\Utils.h" />
+    <ClInclude Include="include\Hook\EZTJ2K_FixHook.h" />
     <ClInclude Include="include\Interface\Ehnd.h" />
+    <ClInclude Include="include\Interface\TLEngine.h" />
     <ClInclude Include="include\Library\reverse_iterate.hpp" />
+    <ClInclude Include="include\TLEngine\TLEngine_EZT_J2K.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

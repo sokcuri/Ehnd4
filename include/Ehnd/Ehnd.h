@@ -20,16 +20,18 @@
 **/
 
 #include "../../include/Interface/Ehnd.h"
+#include "../../include/Interface/TLEngine.h"
+
+#include "../../include/TLEngine/TLEngine_EZT_J2K.h"
 
 class CEhnd : public IEhnd
 {
 public:
 	CEhnd()
-		: m_engineType(EHND_ENGINE_NULL)
-			, m_srcLang(EHND_TL_LANG_UNKNOWN), m_destLang(EHND_TL_LANG_UNKNOWN)
+		: m_srcLang(EHND_TL_LANG_UNKNOWN), m_destLang(EHND_TL_LANG_UNKNOWN)
 			, m_outTextA(0), m_outTextW(0)
 			, m_lastErr(EHNDERR_NOERR)
-			, m_bInit(false)
+			, m_transEngine(NULL)
 	{
 		
 	}
@@ -51,7 +53,7 @@ public:
 
 	EH_METHOD(BOOL32) Open(EHND_ENGINE engine, EHND_TL_LANG srcLang, EHND_TL_LANG destLang)
 	{
-		if (m_bInit)
+		if (_GetEngineType() != EHND_ENGINE_NULL)
 		{
 			_SetLastError(EHNDERR_ALREADY_ENGINE_OPENED);
 			return false;
@@ -82,18 +84,28 @@ public:
 			}
 		}
 
-		m_bInit = true;
-		m_engineType = engine;
+		m_transEngine = new TLEngine_EZT_J2K();
+		if (!m_transEngine->Init())
+		{
+			_SetLastError(m_transEngine->GetLastError());
+			m_transEngine->Release();
+			m_transEngine = NULL;
+			return false;
+		}
+		else
+		{
+			_SetLastError(EHNDERR_NOERR);
+		}
 
-		_SetLastError(EHNDERR_NOERR);
 		return true;
 	}
 
 	EH_METHOD(BOOL32) Close()
 	{
+		delete m_transEngine;
+
 		// uninitialize variable
-		m_bInit = false;
-		m_engineType = EHND_ENGINE_NULL;
+		m_transEngine = NULL;
 		m_srcLang = m_destLang = EHND_TL_LANG_UNKNOWN;
 
 		_SetLastError(EHNDERR_NOERR);
@@ -102,43 +114,53 @@ public:
 
 	EH_METHOD(BOOL32) TranslateText(LPCSTR srcText, CHAR **outText)
 	{
-		if (m_engineType == EHND_ENGINE_NULL)
+		if (_GetEngineType() == EHND_ENGINE_NULL)
 		{
 			_SetLastError(EHNDERR_REQUIRE_ENGINE_OPEN);
 			return false;
 		}
 
-		*outText = _SetOutText("Output Sample String -- TranslateText(CP)");
+		if (m_outTextA)
+		{
+			delete[] m_outTextA;
+		}
 
-		_SetLastError(EHNDERR_NOERR);
+		m_transEngine->TranslateText(srcText, outText);
+
+		m_outTextA = *outText;
+		_SetLastError(m_transEngine->GetLastError());
 		return true;
 		
 	}
 	EH_METHOD(BOOL32) TranslateText(LPCWSTR srcText, WCHAR **outText)
 	{
-		if (m_engineType == EHND_ENGINE_NULL)
+		if (_GetEngineType() == EHND_ENGINE_NULL)
 		{
 			_SetLastError(EHNDERR_REQUIRE_ENGINE_OPEN);
 			return false;
 		}
-		*outText = _SetOutText(L"Output Sample String -- TranslateText(UNICODE)");
 
-		_SetLastError(EHNDERR_NOERR);
+		if (m_outTextW)
+		{
+			delete[] m_outTextW;
+		}
+
+		m_transEngine->TranslateText(srcText, outText);
+
+		m_outTextW = *outText;
+		_SetLastError(m_transEngine->GetLastError());
 		return true;
 	}
 	EH_METHOD(BOOL32) SendEngineMessage(UINT Message, WPARAM wParam, LPARAM lParam)
 	{
-		if (m_engineType == EHND_ENGINE_EZT_J2K)
+		if (_GetEngineType() == EHND_ENGINE_NULL)
 		{
-			if (Message == EHND_MSG_EZTJ2K_SET_USERDICT)
-			{
-				printf("Message Received : EHND_MSG_EZTJ2K_SET_USERDICT\n");
-			}
-			else if (Message == EHND_MSG_EZTJ2K_RELOAD_USERDICT)
-			{
-				printf("Message Received : EHND_MSG_EZTJ2K_RELOAD_USERDICT\n");
-			}
+			_SetLastError(EHNDERR_REQUIRE_ENGINE_OPEN);
+			return false;
 		}
+
+		m_transEngine->SendEngineMessage(Message, wParam, lParam);
+		_SetLastError(m_transEngine->GetLastError());
 		return true;
 	}
 
@@ -169,8 +191,15 @@ private:
 		m_lastErr = error;
 	}
 
+	EHND_ENGINE _GetEngineType() const
+	{
+		if (m_transEngine)
+			return m_transEngine->GetEngineType();
+		return EHND_ENGINE_NULL;
+	}
+
 private:
-	EHND_ENGINE m_engineType;
+	TLEngine *m_transEngine;
 	EHND_TL_LANG m_srcLang;
 	EHND_TL_LANG m_destLang;
 
@@ -178,10 +207,10 @@ private:
 	WCHAR *m_outTextW;
 
 	EHNDERR m_lastErr;
-
-	bool m_bInit;
 };
 
 bool EH_UpdateCheck();
-bool EH_InstallHook(char *libPath);
-bool EH_UninstallHook();
+bool EH_InitLua();
+bool EH_UninitLua();
+//bool EH_InstallHook(char *libPath);
+//bool EH_UninstallHook();

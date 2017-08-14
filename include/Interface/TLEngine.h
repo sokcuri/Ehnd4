@@ -1,4 +1,4 @@
-﻿/**
+/**
 * This file is part of Ehnd.
 *
 * Ehnd is free software: you can redistribute it and/or modify
@@ -19,31 +19,21 @@
 *
 **/
 
-#include "stdafx.h"
+#pragma once
+#include <Windows.h>
 #include "Ehnd.h"
-#include "MinHook.h"
 
-HINSTANCE g_hInst = NULL;
-BOOL g_bInit = FALSE;
-char g_szDLLName[MAX_PATH] = { 0, };
-
-BOOL APIENTRY DllMain( HMODULE hModule,
-                       DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
-					 )
+struct TLEngine
 {
-	switch (ul_reason_for_call)
-	{
-	case DLL_PROCESS_ATTACH:
-		g_hInst = hModule;
-		MH_Initialize();
-		EH_InitLua();
-		break; 
-	case DLL_PROCESS_DETACH:
-		//if (g_bInit) EH_UninstallHook();
-		MH_Uninitialize();
-		EH_UninitLua();
-		break;
-	}
-	return TRUE;
-}
+	EH_METHOD(bool) Init() PURE;
+	EH_METHOD(void) Release() PURE;
+	EH_METHOD(EHND_ENGINE) GetEngineType() const PURE;
+
+	EH_METHOD(BOOL32) TranslateText(LPCSTR srcText, char **outText) PURE;
+	EH_METHOD(BOOL32) TranslateText(LPCWSTR srcText, WCHAR **outText) PURE;
+
+	EH_METHOD(BOOL32) SendEngineMessage(UINT Message, WPARAM wParam, LPARAM lParam) PURE;
+
+	EH_METHOD(EHNDERR) GetLastError() const PURE;
+	EH_METHOD(void) SetLastError(EHNDERR error) PURE;
+};

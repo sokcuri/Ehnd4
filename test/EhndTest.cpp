@@ -65,38 +65,38 @@ namespace ezt
 	using J2K_SETHNJ2HAN = int(WINAPI*)(void);
 	J2K_SETHNJ2HAN J2K_SetHnj2han = NULL;
 
-	using J2K_SETJWIN = int(WINAPI*)(void);
-	J2K_SETJWIN J2K_SetJWin = NULL;
+using J2K_SETJWIN = int(WINAPI*)(void);
+J2K_SETJWIN J2K_SetJWin = NULL;
 
-	using J2K_SETPRIORDICT = int(WINAPI*)(void);
-	J2K_SETPRIORDICT J2K_SetPriorDict = NULL;
+using J2K_SETPRIORDICT = int(WINAPI*)(void);
+J2K_SETPRIORDICT J2K_SetPriorDict = NULL;
 
-	using J2K_SETPROPERTY = int(WINAPI*)(void);
-	J2K_SETPROPERTY J2K_SetProperty = NULL;
+using J2K_SETPROPERTY = int(WINAPI*)(void);
+J2K_SETPROPERTY J2K_SetProperty = NULL;
 
-	using J2K_STOPTRANSLATION = int(WINAPI*)(void);
-	J2K_STOPTRANSLATION J2K_StopTranslation = NULL;
+using J2K_STOPTRANSLATION = int(WINAPI*)(void);
+J2K_STOPTRANSLATION J2K_StopTranslation = NULL;
 
-	using J2K_TERMINATE = int(WINAPI*)(void);
-	J2K_TERMINATE J2K_Terminate = NULL;
+using J2K_TERMINATE = int(WINAPI*)(void);
+J2K_TERMINATE J2K_Terminate = NULL;
 
-	using J2K_TRANSLATECHAT = int(WINAPI*)(void);
-	J2K_TRANSLATECHAT J2K_TranslateChat = NULL;
+using J2K_TRANSLATECHAT = int(WINAPI*)(void);
+J2K_TRANSLATECHAT J2K_TranslateChat = NULL;
 
-	using J2K_TRANSLATEFM = int(WINAPI*)(void);
-	J2K_TRANSLATEFM J2K_TranslateFM = NULL;
+using J2K_TRANSLATEFM = int(WINAPI*)(void);
+J2K_TRANSLATEFM J2K_TranslateFM = NULL;
 
-	using J2K_TRANSLATEMM = char*(WINAPI*)(void);
-	J2K_TRANSLATEMM J2K_TranslateMM = NULL;
+using J2K_TRANSLATEMM = char*(WINAPI*)(void);
+J2K_TRANSLATEMM J2K_TranslateMM = NULL;
 
-	using J2K_TRANSLATEMMEX = char*(WINAPI*)(void);
-	J2K_TRANSLATEMMEX J2K_TranslateMMEx = NULL;
+using J2K_TRANSLATEMMEX = char*(WINAPI*)(void);
+J2K_TRANSLATEMMEX J2K_TranslateMMEx = NULL;
 
-	using J2K_TRANSLATEMMNT = char*(WINAPI*)(int, char*);
-	J2K_TRANSLATEMMNT J2K_TranslateMMNT = NULL;
+using J2K_TRANSLATEMMNT = char*(WINAPI*)(int, char*);
+J2K_TRANSLATEMMNT J2K_TranslateMMNT = NULL;
 
-	using J2K_GETJ2KMAINDIR = char*(WINAPI*)(void);
-	J2K_GETJ2KMAINDIR J2K_GetJ2KMainDir = NULL;
+using J2K_GETJ2KMAINDIR = char*(WINAPI*)(void);
+J2K_GETJ2KMAINDIR J2K_GetJ2KMainDir = NULL;
 }
 
 namespace ehnd
@@ -140,12 +140,6 @@ int main()
 	InitInfo.version = 1;
 	strcpy(InitInfo.dat, (GetCurrentPathA() + "..\\Common\\Dat").c_str());
 	strcpy(InitInfo.dll, (GetCurrentPathA() + "..\\Common\\J2KEngine.dll").c_str());
-	
-	if (!EZT_Init("EHND", &InitInfo))
-	{
-		printf("EZT_Init Failed\n");
-		return 0;
-	}
 
 	printf("Initialization Complete\n");
 
@@ -154,16 +148,18 @@ int main()
 
 	if (!ehInst->Open(EHND_ENGINE_EZT_J2K)) {
 		printf("Open Failed: %x\n", ehInst->GetLastError());
+		return false;
 	}
 
-	char *test = 0;
-	if (!ehInst->TranslateText("a", &test)) {
+	WCHAR *test = 0;
+	if (!ehInst->TranslateText(L"긲뺝뢜갶궓뽦궋뜃귦궧갶? Getchu.com 1999-2017", &test)) {
 		printf("Translate Failed: %x\n", ehInst->GetLastError());
 	}
 
 	ehInst->SendEngineMessage(EHND_MSG_EZTJ2K_RELOAD_USERDICT, 0, 0);
 
 	printf("String Test: %s\n", test);
+	return true;
 
 	auto ET_GetChu_String = []() {
 		auto result = ezt::J2K_TranslateMMNT(0, "top귉TOP ?귽긻?긙궟뿕뾭긊귽긤긂긃긳뿗쀰Twitter궇궖궽밲귺?깑긣TOPTOP긒??귺긦긽돶뒁긐긞긛뺱궖뼃룕먒갋랦럮벏릐룛맜뛀DL귺?깑긣긳깓긐     뤬띢뙚랊  긌긿깛긻?깛  궓딠궸볺귟  긇?긣귩뙥귡뜞뙉궻?귽긣깑 깋깛긌깛긐 ?뽵 긜?깑긚 긳깋깛긤덇뿓 벫밫븊 벫밫됪몴 뵯봽볷빾뛛륃뺪 Twitter 긽깑?긊 됵덒긵깒?깛긣긆긚긚긽룮뷼 띮궑궶궋붯룛궻덄궲궔궫 뺱궖뼃긇긫?븊 똟?긞긏긚 긇?긤긲귷귽긣!! 깞귷깛긊?긤G 긳?긚??긬긞긏... 귺?긇긩? 긖긂깛긤긣깋긞긏CD 몥궻붯뺴궻긲긅?깏긛? EXTRA 1 VOCAL걬SOUND COL... 긚긻깑긇?긤긚긣깋귽긏-긖귽긎깈긂긙긳깑?-걅벏... 긐깏긗귽귺 긲귷깛긣?긣깏긊? 묉3뒱 ?긻긚긣깏... Megami MAGAZINE 2017봏6뙉뜂 궓뒁궢귒CD128 To LOVE귡?궴귞귆귡? 긘깏?긛10뢂봏귺긦긫?긖깏... 궞궻멹맧귞궢궋맊둉궸뢪븶귩갏2 묉4뒱 Blu-ray Dis... Twitter걮Getchu.com_n           깒귺귺귽긡?GET궻?긿깛긚걲 몓궋롌룦궭걲궓몓귕궸갏 긚?긞긲뺝뢜뭷궟돒뺝궓뫲궭궢궲귏궥갏  TOP NEWS?궖돷귣궢륡럣궕뽥궑귡긌긿깛긻?깛궸걏muku걐먩맯궻륡럣귩믁돿갏1됷궻뭾빒뗠뒂15,000?댥뤵궳4롰쀞궻륡럣궔귞궓뛆궖궶귖궻귩긵깒?깛긣갏걏muku걐먩맯궻륡럣귩믁돿궢귏궢궫괃뺱궖뼃궳뾎뼹궶걏긲깒긚걐귝귟TV귺긦긽걑긟귽깛긄깛긙긃깑BREAK걒궻긭깓귽깛걏밮뙉귕궙귡걬볽뙉궥귒귢걐궻뺱궖뼃긇긫?궕뵯봽뙂믦갏긌긿깋긏??긢긗귽깛갋몟띿됪듒벬걏뛼떞귒궔걐럞?궖돷귣궢궻띿됪귩뙰궸갂뺱궖뼃긇긫?궸띍밙궶됪렲궸궶귡귝궎띋뮧맢귩뛱궯궫럧뗂궻뺱궖뼃긇긫?갏6/19걁뙉걂뛛륷  걑NEW GAME!!걒BD걬DVD멣6뒱궕?뽵둎럑걲궛궯궭귙멣뒱벫밫궼긆깏긙긥깑B2?긻긚긣깏?갂궠귞궸둫뒱궸궼긆깏긙긥깑?긚긣긇?긤벫밫븊갏먩뭶?뽵긌긿깛긻?깛귖렳?뭷괃묉덇뒱귩궟?뽵뮯궋궫뺴궸궼갂먩뭶궳띿롌갋벦?맫뫞쁚먩맯?궖돷귣궢걏궿귅귒궻A3긏깏귺?긚??걐귖븊궋궲궖귏궥갏뼰궘궶귟렅묉궸뢎뿹궳궥궻궳궓뙥벀궢궶궘갏6/17걁뱘걂뛛륷  긭깓귽깛븵Ver궻걏궺귪궵귣궋궵돿뱻똟걐븊궖궻긲귷깛긳긞긏걑띮궑궶궋붯룛궻덄궲궔궫 Memorial 뙽믦붎걒?뽵둎럑갏빒뚆뼟뢁?궻룷먣귘갂긌긿깋긏??됶먣갂깒귺귽깋긚긣궶궵귩뢁?궢궫뎘땦뺎뫔붎궻걏띮궑긇긩걐긲귷깛긳긞긏궕뱋뤾갏6/16걁뗠걂뛛륷  Getchu.com뮧귊걑2017봏됂귺긦긽붥멺?걒귩뚺둎걲걏NEW GAME!!걐걏밮럊궻3P걐걏먰뷥먥룯긘깛긲긅긎귺AXZ걐궶궵쁞묋궻됂귺긦긽륃뺪귩?긃긞긏갏릯렄륃뺪귩뛛륷궢궲랷귟귏궥궻궳귝귣궢궘궓딂궋궢귏궥갃됂귺긦긽롥묋됊긻?긙걬됂귺긦긽BD갋DVD긻?긙귖뚺둎뭷괃  걙Casket긳깓긐걑뵠깓긐갃걒묉33됷걚걑붯룛궕댶롰뫎궬궯궫뤾뜃?떝궑럔깞귷깛긬귽귺궻듑긣깓쀪뫌뮧떝?걒뼟뒶맟갋긙긿긑갋긲귷귽긣  뎘덁뜈50뢂봏딯봑띿뷼 귺긦긽걏DEVILMAN crybaby걐2018봏룊뢶갂Netflix궸궲벲먫멣맊둉뚺둎갏?듒벬궸뱬먶맠뼻  딖뫲궻됂귺긦긽걑NEW GAME!!걒OP긡??갂ED긡??갂긌긿깋긏???깛긐긘깏?긛1?4궸갂궛궯궭귙뛶볺벫밫갋긆깏긙긥깑?긚긣긇?긤벫밫븊궕뙂믦갏OP갋ED롥묋됊궸궼 긆깏긙긥깑?긚긣긇?긤궕갂긌긿깋긏???깛긐궼vol.1?4쁀벍궳?긚긣긇?긤괪뻼긜긞긣궕벫밫궳귖귞궑귏궥갏  긖귽긤긓긨긏긘깈깛걏돘궰궶궕깏긛?걐묉272됷?7뙉23볷둎띊걑긣깋긹깏깛긐갋긆?긊긚긣2017 ?뱧뙳떮?걒?긑긞긣덇붗뵯봽뭷갏뢯뎶롌륃뺪갋쁝뒁딇뛘뿪긓깋?갋븿뚭뛛륷괃  걑띮궑궶궋붯룛궻덄궲궔궫괂걒BD걬DVD묉1뒱갋?띹뺡릐?궖돷귣궢긙긿긑긞긣귽깋긚긣궕뚺둎걲귽긹깛긣?긑긞긣뾆먩붛봽?뜛뙏궶궵뜈됗벫밫븊궻?뒱궼7/26뵯봽갏똟갋뎟뿙갲갋럪덳먩봸궻릣뭶럓궕炤궢궋?궖돷귣궢긙긿긑긞긣궕뚺둎갏뒶멣맯럀뙽믦붎궸궼뙱띿롌갋듴뚈럍뼻룕궖돷귣궢룷먣똣띦긳긞긏깒긞긣귘긎긿깑긒?긇긫??깛긐뢁?궻벫밫CD궶궵뜈됗벫밫븊궖궳궥귝갏  TV귺긦긽걏궿궶궞궻?궴걐6뙉16볷뺳몭궻묉11쁞걏귚궘궴궢궘귡궴궢걐?뜍벍됪갋궇귞궥궣걬먩뛱긇긞긣궕뚺둎  TV귺긦긽걏긫?긇깛딉먘뮧뜽뒸걐7뙉7볷귝귟뺳몭긚??긣갏?Twitter긌긿깛긻?깛귖렳?뭷  TV귺긦긽걏뱆멢?깑긤깒깛걐궕뢁?궠귢궫뙱띿긓?긞긏궻뙽믦붎9뒱?11뒱궕?뽵둎럑갏묉9뒱궼DVD뛶볺롌귽긹깛긣?긑긞긣뾆먩뛶볺?궢뜛귒뙏궕븬볺궠귢귏궥갃  걑Ninetail Chronicle Vocal Collection걒?뽵둎럑걲ninetail똭띿뷼궻긒??롥묋됊28뗁귩뢜귕궫롮뗃궻긖긂깛긤긣깋긞긏갏ninetail뵯뫉궔귞12봏갃럒뻺긳깋깛긤궳궇귡dualtail갋tritail궻뗁귩귏궴귕궲뢁?갏 륷띿긐긞긛?뽵둎럑갏걏sin 렦궰궻묈띬 긇긥궭귂귺긏깏깑?긿??걁10롰걂걐/걏긳깓긞긓깏?긌긿깋긏??긚깏?긳 먪쀶걭뼔됓 Ver.2걁3롰걂갂TCG뼔?긵깒귽?긞긣걁3롰걂걐/걏긳깓긞긓깏?긌긿깋긏??긚깏?긳 Angel Beats갏갂긌긿깋긏??뼔?깋긫??긞긣 Ver.3갂긌긿깋긏??긢긞긌긑?긚긓깒긏긘깈깛MAX걐/걏긳깓긞긓깏?긌긿깋긏??긚깏?긳 뻷둉먰딯긢귻긚긊귽귺긘깏?긛걁2롰걂갂긌긿깋긏??뼔?깋긫??긞긣걐/걏긌긿깋긏??뼔?깋긫??긞긣 뙅뤻뾈볖궼뾇롌궳궇귡걁2롰걂걐/걏긌긿깋긏??뼔?깋긫??긞긣 CLANNAD?긏깋긥긤?걐/걏긌긿깋긏??뼔?깋긫??긞긣 릋똼궻땺걁2롰걂걐/걏TCG뼔?긵깒귽?긞긣 Charlotte걁2롰걂걐/걏뭶궧궔궑갋궇궘궢귛귪갏궸궋궲귪궟 Free갏-Eternal Summer- 뤌돦셻걐 걁CD걂륷띿?뽵둎럑갏걏BLCD걏긻깛긢깄깋??뢡릐긆긽긊긫?긚?걐[궟뻁뷏긄긞?붦]걐/걏긤깋?CD 궩귢궼궠궠귘궔궶쀶궻궼궣귏귟?뛼쁐뵻릐걁CV갌뜴쁝?뭷걂걐/걏BLCD걏궓쀗궠귪궭궻똝믫럷륃?뱻덁됄궻뤾뜃?걐?뛼믆뭧릐갂뵏덁뾋됳걐/걏걏DIABOLIK LOVERS CHAOS LINEAGE걐 Vol.2 VIOLET걐/걏DIABOLIK LOVERS Para-Selene Vol.5 땤뒱깋귽긣?땤뒱깋귽긣걁CV갌빟먯묈뺛걂걐/걏긤깋?CD걏귺귽궻궇귡맯뒋 Vol.2 벏맩3봏뽞걐?쁝뻶걁CV갌긡긣깋?긞긣뱋걂걐 륷띿?뽵둎럑갏걏?뤾붎?긑긞긣긾깛긚???긌?궸궖귕궫갏?깄?긙긞긏긓깒긏긘깈깛걐/걏BanG Dream갏 긌긿깋긏???깛긐걏?귽긣깑뼟믦걐?랹릟뜾댗걁CV갌묈떞띒뛻걂걐/걏BanG Dream갏 긌긿깋긏???깛긐걏?귽긣깑뼟믦걐?럖깣묳뾎띸걁CV갌댦뱻띒뜾걂걐/걏뙝룷돫궭귗귪궺귡 OP긡???ED긡??걏?귽긣깑뼟믦걐?WAOOON걐6/15걁뽜걂뛛륷  걑Angel Beats갏 PERFECT VOCAL COLLECTION걒긙긿긑긞긣궕뚺둎걲룊됷븬볺벫밫궻걏Key Sounds Label Release Party 2017걐귽긹깛긣?긑긞긣돒뺝긘깏귺깑궸귖뭾뽞갏뎕몴궴돶뒁궻뾝뜃궳?먣궴궶궯궫걑Angel Beats갏걒궻??긇깑뗁귩멣궲뽘뾽갂궠귞궸1봏귆귟궴궶귡 Girls Dead Monster궻륷뗁걏Hungry Song걐귖뢁?궠귢궲귏궥귝!!  PS4붎걑깑긲깋깛궻뭤돷뼽?궴뻷룛긩뿷뭖걒9뙉28볷궸뵯봽갏?뚺렜긖귽긣걬릐??벍됪귩뚺둎  륷띿OVA&귽긹깛긣뤵뎕갂TV귺긦긽묉3딖귖뵯?갏?걏깂?긩긚긚긽뚺렜긲귷깛??긡귻깛긐걐귽긹깛긣깒??긣  걑긊?깑긛걬긬깛긟귷? ?뤾붎걒귺깛긟귻긆뛼뛝궻븲묂뮮걏긻긬깓긦걐궻릣뭶럓귩긩깏궴맖궋궳긲귻긎깄귺돸갏2릐뤸귟궻땺묈궶븖궖쀖귘묇띆궸맰귟뜛귏귢궫띀띢뛊궻CV33궶궵?뫬댥둖궸귖뙥룋뼖띦갏긆?긑긬?긟궸긻?긬?긏깋긲긣귖갏  궓귖궭궩귅궴긳깓긐걓궓귖깓긐걕걫3?븵몧귖궔귦궋궋갏걏궇귡궋궼쀶궴궋궎뼹궻뻷뺷걐궻뛖귟븫빁귩?깋깏  PRESTAR긓깋??yozuca*긢긮깄?15뢂봏딯봑귽긹깛긣둎띊갏 걏PRESTAR LIVE 4th FESTIVAL걐궸긚긻긘긿깑긒긚긣궴궢궲뢯뎶궢귏궥갃  걑딝벍먰럐긊깛?? THE ORIGIN V 똽벺 깑긂?됵먰걒BD걬DVD궕?뽵둎럑걲뜞궶귞먩뭶궳륷딮?궖돷귣궢귽깋긚긣럊뾭궻A4긏깏귺긲귷귽깑벫밫븊궖갏쀝똶뵯뛱븫릶1,000뼔븫귩뚓귡갂댝뷚쀇쁝궸귝귡묈긭긞긣긓?긞긏긚걑딝벍먰럐긊깛?? THE ORIGIN걒궕궰궋궸귺긦긽돸갃궞귢궕덇봏먰몚궻?렳궳궇귡??갃 륷띿긲귻긎깄귺?뽵둎럑갏걏궺귪궵귣궋궵 깏?깏긄걁?긑긞긣긾깛긚?? 긖깛갋??깛걂걐/걏궺귪궵귣궋궵 긂긅?긚긬귽긣걁듞묂궞귢궘궢귛귪 ?듞궞귢?걂걐/걏룊돶?긏GT긵깓긙긃긏긣 깒?긘깛긐?긏2016 TeamUKYO돒뎴Ver.걐/걏뮪렅뙰긒귽? 긨긵긡깄?긧 긩깗?깑 떍뎙릣뭶 뿧궭??긛ver.걐/걏SUWAHIME PROJECT 뙷붨긖깋걐/걏긩?긒??갋긩?깋귽긲 뵏[띋붛]걐 ?뽵믵먛궼걏6/15걐귏궳갏걏긽긊긚긣귺걐똣띦?궖돷귣궢귽깋긚긣궕?긻긚긣깏?궸궶궯궲뱋뤾갏걏귝궎궞궩갏"\
@@ -220,26 +216,6 @@ bool EZT_Load(HMODULE &hDLL)
 	// Declare eztrans function tables
 	std::list<std::pair<char *, LPVOID>> fpTable =
 	{
-		{ "J2K_Initialize", &ezt::J2K_Initialize },
-		{ "J2K_InitializeEx", &ezt::J2K_InitializeEx },
-		{ "J2K_FreeMem", &ezt::J2K_FreeMem },
-		{ "J2K_GetPriorDict", &ezt::J2K_GetPriorDict },
-		{ "J2K_GetProperty", &ezt::J2K_GetProperty },
-		{ "J2K_ReloadUserDict", &ezt::J2K_ReloadUserDict },
-		{ "J2K_SetDelJPN", &ezt::J2K_SetDelJPN },
-		{ "J2K_SetField", &ezt::J2K_SetField },
-		{ "J2K_SetHnj2han", &ezt::J2K_SetHnj2han },
-		{ "J2K_SetJWin", &ezt::J2K_SetJWin },
-		{ "J2K_SetPriorDict", &ezt::J2K_SetPriorDict },
-		{ "J2K_SetProperty", &ezt::J2K_SetProperty },
-		{ "J2K_StopTranslation", &ezt::J2K_StopTranslation },
-		{ "J2K_Terminate", &ezt::J2K_Terminate },
-		{ "J2K_TranslateChat", &ezt::J2K_TranslateChat },
-		{ "J2K_TranslateFM", &ezt::J2K_TranslateFM },
-		{ "J2K_TranslateMM", &ezt::J2K_TranslateMM },
-		{ "J2K_TranslateMMEx", &ezt::J2K_TranslateMMEx },
-		{ "J2K_TranslateMMNT", &ezt::J2K_TranslateMMNT },
-
 		{ "EH_CreateInstance", &ehnd::EH_CreateInstance }
 	};
 	for (auto &p : fpTable)
@@ -261,9 +237,4 @@ bool EZT_Unload(HMODULE &hDLL)
 	FreeLibrary(hDLL);
 	hDLL = NULL;
 	return true;
-}
-
-bool EZT_Init(char *AppSig, EZT_INITINFO *InitInfo)
-{
-	return ezt::J2K_InitializeEx("Ehnd", reinterpret_cast<char *>(InitInfo));
 }

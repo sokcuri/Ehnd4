@@ -21,7 +21,7 @@
 
 #include "stdafx.h"
 #include "MinHook.h"
-#include "CrashFix.h"
+#include "EZTJ2K_FixHook.h"
 
 LPVOID fpPatch_Org_A1;
 LPVOID fpPatch_Org_A2;
@@ -953,7 +953,7 @@ NAKED void Patch_C_End()
 	}
 }
 
-bool CrashFixHook()
+bool EZTJ2K_FixHook(char *module_name)
 {
 
 	// CrashFix -- Prevent to crash ezTransXP
@@ -980,7 +980,7 @@ bool CrashFixHook()
 	};
 	for (const auto &p : patterns)
 	{
-		if (search_ptn(std::get<1>(p), std::get<2>(p), std::get<3>(p), g_szDLLName) != 1)
+		if (search_ptn(std::get<1>(p), std::get<2>(p), std::get<3>(p), module_name) != 1)
 		{
 			printf("Can't Found %s\n", std::get<0>(p));
 			return false;
