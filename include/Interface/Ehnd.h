@@ -27,6 +27,8 @@
 enum EHNDERR
 {
 	EHNDERR_NOERR						= 0x00000000,
+	EHNDERR_LOADLIBRARY_FAILED			= 0xa0000005,
+	EHNDERR_GETPROCADDRESS_FAILED		= 0xa0000006,
 	EHNDERR_NOT_IMPL					= 0xa0000010,
 	EHNDERR_MEMORY_ALLOC_FAILED			= 0xa0000015,
 	EHNDERR_REQUIRE_ENGINE_OPEN			= 0xa0000030,
@@ -92,6 +94,11 @@ typedef unsigned char   EHNDBYTE;
 // pure method preprocessor
 #define EH_METHOD(type) virtual type WINAPI
 #define PURE = 0
+
+#ifndef ASSERT
+#include <stdio.h>
+#define ASSERT(x) printf("Assert at %s %d\n", __FILE__, __LINE__)
+#endif
 
 // IEhnd Interface
 struct IEhnd

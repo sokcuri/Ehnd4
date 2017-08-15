@@ -238,6 +238,7 @@
     <ClInclude Include="include\Ehnd\Utils.h" />
     <ClInclude Include="include\Hook\EZTJ2K_FixHook.h" />
     <ClInclude Include="include\Interface\Ehnd.h" />
+    <ClInclude Include="include\interface\EhndLib.h" />
     <ClInclude Include="include\Interface\TLEngine.h" />
     <ClInclude Include="include\Library\reverse_iterate.hpp" />
     <ClInclude Include="include\TLEngine\TLEngine_EZT_J2K.h" />

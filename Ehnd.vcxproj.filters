@@ -299,6 +299,9 @@
     <ClInclude Include="include\Hook\EZTJ2K_FixHook.h">
       <Filter>Include Files\Hook</Filter>
     </ClInclude>
+    <ClInclude Include="include\interface\EhndLib.h">
+      <Filter>Include Files\Interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

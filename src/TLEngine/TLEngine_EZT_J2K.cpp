@@ -81,6 +81,7 @@ BOOL32 TLEngine_EZT_J2K::TranslateText(LPCWSTR srcText, WCHAR ** outText)
 
 BOOL32 TLEngine_EZT_J2K::SendEngineMessage(UINT Message, WPARAM wParam, LPARAM lParam)
 {
+	printf("Message Received : %x\n", Message);
 	SetLastError(EHNDERR_NOERR);
 	return true;
 }
