@@ -36,3 +36,5 @@ std::string WideCharToMultiByte(int CodePage, const std::wstring widechar);
 std::string MBCStoUTF8(int CodePage, const std::string input);
 
 std::string UTF8toMBCS(int CodePage, const std::string input);
+
+std::string CreateUUID();

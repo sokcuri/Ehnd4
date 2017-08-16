@@ -12,17 +12,21 @@ public:
 	{
 
 	}
-
-	EHNDERR Create(LPCWSTR wszDLLPath)
+	virtual ~EhndLib()
 	{
-		std::wstring DLLPath = wszDLLPath;
+		Release();
+	}
+
+	EHNDERR Create(LPCSTR szDLLPath)
+	{
+		std::string DLLPath = szDLLPath;
 
 		// wszDLLPath가 절대경로가 아니다면 절대경로로 만들어준다
 		// Working Directory의 DLL이 불리는것을 방지하기 위함
-		if (wcsstr(wszDLLPath, L":") == NULL)
-			DLLPath = GetCurrentPathW() + wszDLLPath;
+		if (strstr(szDLLPath, ":") == NULL)
+			DLLPath = GetCurrentPathA() + szDLLPath;
 
-		m_hDLL = LoadLibrary(DLLPath.c_str());
+		m_hDLL = LoadLibraryA(DLLPath.c_str());
 		if (m_hDLL == NULL)
 		{
 			printf("Ehnd Load DLL '%s' Failed.\n", DLLPath.c_str());
@@ -44,15 +48,10 @@ public:
 		return EHNDERR_NOERR;
 	}
 
-	bool Destroy()
-	{
-		m_pEhnd = NULL;
-		FreeLibrary(m_hDLL);
-	}
-
 	EH_METHOD(void) Release()
 	{
-		return m_pEhnd->Release();
+		m_pEhnd->Release();
+		FreeLibrary(m_hDLL);
 	}
 	EH_METHOD(UINT32) GetVersion() const
 	{
@@ -66,7 +65,6 @@ public:
 	{
 		return m_pEhnd->Open(engine, srcLang, destLang);
 	}
-
 	EH_METHOD(BOOL32) TranslateText(LPCSTR srcText, char **outText)
 	{
 		return m_pEhnd->TranslateText(srcText, outText);
@@ -75,7 +73,6 @@ public:
 	{
 		return m_pEhnd->TranslateText(srcText, outText);
 	}
-
 	EH_METHOD(BOOL32) SendEngineMessage(UINT Message, WPARAM wParam, LPARAM lParam)
 	{
 		return m_pEhnd->SendEngineMessage(Message, wParam, lParam);

@@ -18,8 +18,12 @@
 *   If not, see <http://www.gnu.org/licenses/>.
 *
 **/
+
 #include "stdafx.h"
 #include "Utils.h"
+
+#pragma comment(lib, "rpcrt4.lib")
+#include <Rpc.h>
 
 std::string GetLoadPathA()
 {
@@ -205,4 +209,17 @@ std::string MBCStoUTF8(int CodePage, const std::string input)
 std::string UTF8toMBCS(int CodePage, const std::string input)
 {
 	return WideCharToMultiByte(CodePage, MultiByteToWideChar(CP_UTF8, input));
+}
+
+std::string CreateUUID()
+{
+	std::string uuid_str;
+	UUID uuid;
+	char *str;
+
+	UuidCreate(&uuid);
+	UuidToStringA(&uuid, (RPC_CSTR*)&str);
+	uuid_str = str;
+	RpcStringFreeA((RPC_CSTR*)&str);
+	return uuid_str;
 }

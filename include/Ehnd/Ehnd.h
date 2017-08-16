@@ -35,10 +35,14 @@ public:
 	{
 		
 	}
+	virtual ~CEhnd()
+	{
+		Release();
+	}
 
 	EH_METHOD(void) Release()
 	{
-		delete this;
+		m_transEngine->Release();
 	}
 
 	EH_METHOD(UINT32) GetVersion() const

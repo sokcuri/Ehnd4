@@ -25,9 +25,9 @@
 // implementation
 int main()
 {
-	EhndLib ehnd;
+	EhndLib ehnd, ehnd2;
 
-	EHNDERR error = ehnd.Create(L"Ehnd.dll");
+	EHNDERR error = ehnd.Create("Ehnd.dll");
 	if (error) {
 		printf("Initialize Failed : %x\n", error);
 		return false;
@@ -48,6 +48,25 @@ int main()
 
 	ehnd.SendEngineMessage(EHND_MSG_EZTJ2K_RELOAD_USERDICT, 0, 0);
 
-	printf("String Test: %s\n", test);
+	if (error = ehnd2.Create("Ehnd.dll")) {
+		printf("Initialize Failed : %x\n", error);
+		return false;
+	}
+
+	printf("Initialization Complete\n");
+	printf("Version: %x\n", ehnd2.GetVersion());
+
+	if (!ehnd2.Open(EHND_ENGINE_EZT_J2K)) {
+		printf("Open Failed: %x\n", ehnd2.GetLastError());
+		return false;
+	}
+
+	char *test2 = 0;
+	if (!ehnd2.TranslateText("긲뺝뢜갶궓뽦궋뜃귦궧갶? Getchu.com 1999-2017", &test2)) {
+		printf("Translate Failed: %x\n", ehnd2.GetLastError());
+	}
+
+	ehnd2.SendEngineMessage(EHND_MSG_EZTJ2K_RELOAD_USERDICT, 0, 0);
+	printf("String Test: %s\n", test2);
 	return true;
 }

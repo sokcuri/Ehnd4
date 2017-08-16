@@ -23,12 +23,16 @@
 #include "../Interface/Ehnd.h"
 #include "../Interface/TLEngine.h"
 #include "../Hook/EZTJ2K_FixHook.h"
+#include "../../include/Ehnd/Utils.h"
 
 class TLEngine_EZT_J2K : public TLEngine
 {
 public:
-	TLEngine_EZT_J2K();
-	~TLEngine_EZT_J2K();
+	TLEngine_EZT_J2K() : m_lastErr(EHNDERR_NOERR) { }
+	virtual ~TLEngine_EZT_J2K()
+	{
+		Release();
+	}
 
 public:
 	EH_METHOD(BOOL32) TranslateText(LPCSTR srcText, char **outText);
@@ -129,7 +133,6 @@ private:
 public:
 	EH_METHOD(bool) Init()
 	{
-		HINSTANCE hDLL;
 		std::string basePath;
 
 		printf("%s\n", GetLoadPathA().c_str());
@@ -141,75 +144,92 @@ public:
 		else
 			basePath = "";
 
-		strcpy(InitInfo.dll, fmt::format("{0}J2KEngine.dll", basePath).c_str());
+
+		char szTempPath[MAX_PATH];
+		GetTempPathA(MAX_PATH, szTempPath);
+
+		std::string uuid = CreateUUID();
+		std::string srcPath = fmt::format("{0}J2KEngine.dll", basePath);
+		std::string destPath = fmt::format("{0}{1}.dll", szTempPath, uuid);
+		bool bSuccess = CopyFileA(srcPath.c_str(), destPath.c_str(), true);
+		printf("srcPath: %s\n", srcPath.c_str());
+		printf("dsetPath: %s\n", destPath.c_str());
+		printf("%d\n", bSuccess);
+
+
+		strcpy(InitInfo.dll, destPath.c_str());
 		strcpy(InitInfo.dat, fmt::format("{0}Dat", basePath).c_str());
 		
 		printf("J2KEngine: %s\n", InitInfo.dll);
 
-		// Load J2KEngine.dlx
-		if ((hDLL = LoadLibraryA(InitInfo.dll)) == NULL)
+		auto retn = [&]() -> bool
 		{
-			MessageBox(0, fmt::format(L"LoadLibrary to J2KEngine.dll Failed: {0}", InitInfo.dll).c_str(), L"Error", MB_ICONERROR);
-			SetLastError(EHNDERR_EZTJ2K_DLL_NOT_FOUND);
-			return false;
-		}
-
-		// Declare eztrans function tables
-		std::list<std::pair<char *, LPVOID>> fpEztTable =
-		{
-			{ "J2K_Initialize", &fpJ2KInitialize },
-			{ "J2K_InitializeEx", &fpJ2KInitializeEx },
-			{ "J2K_FreeMem", &fpJ2KFreeMem },
-			{ "J2K_GetPriorDict", &fpJ2KGetPriorDict },
-			{ "J2K_GetProperty", &fpJ2KGetProperty },
-			{ "J2K_ReloadUserDict", &fpJ2KReloadUserDict },
-			{ "J2K_SetDelJPN", &fpJ2KSetDelJPN },
-			{ "J2K_SetField", &fpJ2KSetField },
-			{ "J2K_SetHnj2han", &fpJ2KSetHnj2han },
-			{ "J2K_SetJWin", &fpJ2KSetJWin },
-			{ "J2K_SetPriorDict", &fpJ2KSetPriorDict },
-			{ "J2K_SetProperty", &fpJ2KSetProperty },
-			{ "J2K_StopTranslation", &fpJ2KStopTranslation },
-			{ "J2K_Terminate", &fpJ2KTerminate },
-			{ "J2K_TranslateChat", &fpJ2KTranslateChat },
-			{ "J2K_TranslateFM", &fpJ2KTranslateFM },
-			{ "J2K_TranslateMM", &fpJ2KTranslateMM },
-			{ "J2K_TranslateMMEx", &fpJ2KTranslateMMEx },
-			{ "J2K_TranslateMMNT", &fpJ2KTranslateMMNT },
-			{ "?GetJ2KMainDir@@YA?AVCString@@XZ", &fpJ2KGetJ2KMainDir },
-		};
-		for (auto &p : fpEztTable)
-		{
-			if ((*reinterpret_cast<LPVOID *>(p.second) =
-				reinterpret_cast<LPVOID>(
-					GetProcAddress(hDLL, p.first)
-					)) == NULL)
+			// Load J2KEngine.dlx
+			if ((m_hDLL = LoadLibraryA(InitInfo.dll)) == NULL)
 			{
-				printf("%s\n", fmt::format("[Hook] Not found function : {0}", p.first).c_str());
-				SetLastError(EHNDERR_EZTJ2K_LOAD_FAILED);
+				MessageBox(0, fmt::format(L"LoadLibrary to J2KEngine.dll Failed: {0}", InitInfo.dll).c_str(), L"Error", MB_ICONERROR);
+				SetLastError(EHNDERR_EZTJ2K_DLL_NOT_FOUND);
 				return false;
 			}
-		}
 
-		if (!EZTJ2K_FixHook(InitInfo.dll))
-		{
-			printf("FixHook Failed\n");
-			SetLastError(EHNDERR_EZTJ2K_FIXHOOK_FAILED);
-			return false;
-		}
+			// Declare eztrans function tables
+			std::list<std::pair<char *, LPVOID>> fpEztTable =
+			{
+				{ "J2K_Initialize", &fpJ2KInitialize },
+				{ "J2K_InitializeEx", &fpJ2KInitializeEx },
+				{ "J2K_FreeMem", &fpJ2KFreeMem },
+				{ "J2K_GetPriorDict", &fpJ2KGetPriorDict },
+				{ "J2K_GetProperty", &fpJ2KGetProperty },
+				{ "J2K_ReloadUserDict", &fpJ2KReloadUserDict },
+				{ "J2K_SetDelJPN", &fpJ2KSetDelJPN },
+				{ "J2K_SetField", &fpJ2KSetField },
+				{ "J2K_SetHnj2han", &fpJ2KSetHnj2han },
+				{ "J2K_SetJWin", &fpJ2KSetJWin },
+				{ "J2K_SetPriorDict", &fpJ2KSetPriorDict },
+				{ "J2K_SetProperty", &fpJ2KSetProperty },
+				{ "J2K_StopTranslation", &fpJ2KStopTranslation },
+				{ "J2K_Terminate", &fpJ2KTerminate },
+				{ "J2K_TranslateChat", &fpJ2KTranslateChat },
+				{ "J2K_TranslateFM", &fpJ2KTranslateFM },
+				{ "J2K_TranslateMM", &fpJ2KTranslateMM },
+				{ "J2K_TranslateMMEx", &fpJ2KTranslateMMEx },
+				{ "J2K_TranslateMMNT", &fpJ2KTranslateMMNT },
+				{ "?GetJ2KMainDir@@YA?AVCString@@XZ", &fpJ2KGetJ2KMainDir },
+			};
+			for (auto &p : fpEztTable)
+			{
+				if ((*reinterpret_cast<LPVOID *>(p.second) =
+					reinterpret_cast<LPVOID>(
+						GetProcAddress(m_hDLL, p.first)
+						)) == NULL)
+				{
+					printf("%s\n", fmt::format("[Hook] Not found function : {0}", p.first).c_str());
+					SetLastError(EHNDERR_EZTJ2K_LOAD_FAILED);
+					return false;
+				}
+			}
 
-		if (!J2K_InitializeEx())
-		{
-			SetLastError(EHNDERR_EZTJ2K_INITIALIZE_FAILED);
-			return false;
-		}
+			if (!EZTJ2K_FixHook(InitInfo.dll))
+			{
+				printf("FixHook Failed\n");
+				SetLastError(EHNDERR_EZTJ2K_FIXHOOK_FAILED);
+				return false;
+			}
 
-		return true;
+			if (!J2K_InitializeEx())
+			{
+				SetLastError(EHNDERR_EZTJ2K_INITIALIZE_FAILED);
+				return false;
+			}
+			return true;
+		}();
+		return retn;
 	}
 
 	EH_METHOD(void) Release()
 	{
-		delete this;
+		FreeLibrary(m_hDLL);
+		printf("[%s] File Delete : %s\n", DeleteFileA(InitInfo.dll) ? "Success" : "Failed", InitInfo.dll);
 	}
 
 private:
@@ -318,5 +338,7 @@ private:
 		return (dwAttrib != INVALID_FILE_ATTRIBUTES &&
 			!(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
 	}
+private:
+	HINSTANCE m_hDLL;
 };
 

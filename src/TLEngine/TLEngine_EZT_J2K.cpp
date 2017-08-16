@@ -22,16 +22,6 @@
 #include "stdafx.h"
 #include "TLEngine_EZT_J2K.h"
 
-TLEngine_EZT_J2K::TLEngine_EZT_J2K() : m_lastErr(EHNDERR_NOERR)
-{
-
-}
-
-TLEngine_EZT_J2K::~TLEngine_EZT_J2K()
-{
-
-}
-
 BOOL32 TLEngine_EZT_J2K::TranslateText(LPCSTR srcText, char ** outText)
 {	
 	char *_transText = J2K_TranslateMMNT(0, (char *)srcText);
